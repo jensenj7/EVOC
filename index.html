@@ -20,43 +20,46 @@
 <!-- 🚔 MAIN APP -->
 <div id="appScreen" class="screen">
 
-  <header>
-    <h1>EVOC Road Course</h1>
-
+  <!-- TOP ROW -->
+  <header class="top-row">
     <select id="cadetSelect"></select>
 
-    <select id="runType">
-      <option>Practice</option>
-      <option>Qualifying</option>
-      <option>Remedial</option>
-    </select>
+    <div class="run-types">
+      <label><input type="checkbox" name="runType" value="Practice"> Practice</label>
+      <label><input type="checkbox" name="runType" value="Qualifying"> Qualifying</label>
+      <label><input type="checkbox" name="runType" value="Remedial"> Remedial</label>
+    </div>
   </header>
 
-  <!-- TIMER -->
-  <div class="timer">
-    <div id="timerDisplay">00:00</div>
+  <!-- CONTROLS -->
+  <div class="controls-row">
+    <button onclick="startTimer()">Start</button>
+    <button onclick="pauseTimer()">Pause</button>
+    <button onclick="endTimer()">End</button>
+    <button onclick="clearAll()">Clear</button>
+  </div>
 
-    <div class="controls">
-      <button onclick="startTimer()">Start</button>
-      <button onclick="pauseTimer()">Pause</button>
-      <button onclick="endTimer()">End</button>
-      <button onclick="clearAll()">Clear</button>
+  <!-- MAIN ROW -->
+  <div class="main-row">
+
+    <!-- LEFT -->
+    <div class="splits-panel">
+      <div onclick="setSplit('skid')" id="skidBtn">Skid Exit</div>
+      <div onclick="setSplit('north')" id="northBtn">North Intersection</div>
+
+      <div class="finish">
+        Finish:
+        <span onclick="editTime('finish')" id="finishTime">--:--</span>
+      </div>
     </div>
+
+    <!-- RIGHT -->
+    <div class="timer-panel">
+      <div id="timerDisplay">00:00</div>
+    </div>
+
   </div>
 
-  <!-- SPLITS -->
-  <div class="splits">
-    <div onclick="setSplit('skid')" id="skidBtn">Skid Exit</div>
-    <div onclick="setSplit('north')" id="northBtn">North Intersection</div>
-  </div>
-
-  <!-- FINISH -->
-  <div class="finish">
-    Finish Time:
-    <span onclick="editTime('finish')" id="finishTime">--:--</span>
-  </div>
-
-  <!-- STATUS -->
   <div id="status" class="status">STATUS: --</div>
 
   <!-- CONES -->
