@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EVOC App</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+</head>
+
+<body>
+
+<!-- 🔐 PIN SCREEN -->
+<div id="pinScreen" class="screen active">
+  <h1>EVOC Access</h1>
+  <input type="password" id="pinInput" placeholder="Enter PIN"/>
+  <button onclick="checkPin()">Enter</button>
+</div>
+
+<!-- 🚔 MAIN APP -->
+<div id="appScreen" class="screen">
+
+  <header>
+    <h1>EVOC Road Course</h1>
+
+    <select id="cadetSelect"></select>
+
+    <select id="runType">
+      <option>Practice</option>
+      <option>Qualifying</option>
+      <option>Remedial</option>
+    </select>
+  </header>
+
+  <!-- TIMER -->
+  <div class="timer">
+    <div id="timerDisplay">00:00</div>
+
+    <div class="controls">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="pauseTimer()">Pause</button>
+      <button onclick="endTimer()">End</button>
+      <button onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <!-- SPLITS -->
+  <div class="splits">
+    <div onclick="setSplit('skid')" id="skidBtn">Skid Exit</div>
+    <div onclick="setSplit('north')" id="northBtn">North Intersection</div>
+  </div>
+
+  <!-- FINISH -->
+  <div class="finish">
+    Finish Time:
+    <span onclick="editTime('finish')" id="finishTime">--:--</span>
+  </div>
+
+  <!-- STATUS -->
+  <div id="status" class="status">STATUS: --</div>
+
+  <!-- CONES -->
+  <div class="cones" id="conesContainer"></div>
+
+  <!-- COMMENTS -->
+  <textarea id="comments" placeholder="Instructor Comments"></textarea>
+
+  <button class="submit" onclick="submitRun()">Submit</button>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
