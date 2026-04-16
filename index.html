@@ -17,9 +17,7 @@
 
 <div id="appScreen" class="screen">
 
-  <!-- TOP -->
   <div class="top-bar">
-
     <div class="cadet-block">
       <label>Cadet</label>
       <select id="cadetSelect"></select>
@@ -30,10 +28,8 @@
       <label><input type="checkbox" name="runType"> Qualifying Run</label>
       <label><input type="checkbox" name="runType"> Remedial</label>
     </div>
-
   </div>
 
-  <!-- BUTTONS -->
   <div class="button-row">
     <button onclick="startTimer()">Start</button>
     <button onclick="pauseTimer()">Pause</button>
@@ -41,7 +37,6 @@
     <button onclick="clearAll()">Clear</button>
   </div>
 
-  <!-- MIDDLE -->
   <div class="middle-row">
 
     <div class="left-panel">
@@ -58,7 +53,6 @@
 
   </div>
 
-  <!-- TABLE HEADER -->
   <div class="table-header">
     <div>Cones Location</div>
     <div class="center">Inside</div>
@@ -66,16 +60,13 @@
     <div class="center">#/Gate</div>
   </div>
 
-  <!-- TABLE -->
   <div id="conesContainer"></div>
 
-  <!-- COMMENTS -->
   <div class="comments-box">
     <label>Instructor Comments</label>
     <textarea id="comments"></textarea>
   </div>
 
-  <!-- FOOTER -->
   <div class="footer">
     <div id="status">Status</div>
     <button onclick="submitRun()">Submit</button>
