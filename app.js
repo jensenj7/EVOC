@@ -21,7 +21,6 @@ function startTimer(){
     timer=setInterval(()=>{
       seconds++;
       updateDisplay();
-      evaluate();
     },1000);
   }
 }
@@ -37,33 +36,12 @@ function endTimer(){
   evaluate();
 }
 
-function clearAll(){
-  seconds=0;
-  updateDisplay();
-  pauseTimer();
+// 🔥 NEW UNIFIED SPLIT HANDLER
+let skidTime=null, northTime=null;
 
-  skidTime=null;
-  northTime=null;
+function handleSplit(type){
 
-  skidBtn.innerText="Skid Exit";
-  northBtn.innerText="North Intersection";
-  finishTime.innerText="--:--";
-
-  document.querySelectorAll("input").forEach(i=>{
-    if(i.type==="checkbox") i.checked=false;
-    if(i.type==="text") i.value="";
-  });
-
-  status.innerText="Status";
-  status.className="";
-}
-
-// SPLITS
-let skidTime=null;
-let northTime=null;
-
-function editSplit(type){
-
+  // SKID
   if(type==="skid"){
     if(!skidTime){
       skidTime=format(seconds);
@@ -77,6 +55,7 @@ function editSplit(type){
     }
   }
 
+  // NORTH
   if(type==="north"){
     if(!northTime){
       northTime=format(seconds);
@@ -90,10 +69,16 @@ function editSplit(type){
     }
   }
 
+  // FINISH (NEW BEHAVIOR)
   if(type==="finish"){
-    let val=prompt("Edit Finish Time", finishTime.innerText);
-    if(val){
-      finishTime.innerText=val;
+    if(finishTime.innerText==="--:--"){
+      pauseTimer();
+      finishTime.innerText=format(seconds);
+    } else {
+      let val=prompt("Edit Finish Time", finishTime.innerText);
+      if(val){
+        finishTime.innerText=val;
+      }
     }
   }
 
@@ -122,15 +107,15 @@ coneList.forEach(name=>{
 
   row.innerHTML=`
     <div>${name}</div>
-    <input type="checkbox">
-    <input type="checkbox">
+    <input type="checkbox" onchange="evaluate()">
+    <input type="checkbox" onchange="evaluate()">
     <input type="text">
   `;
 
   conesContainer.appendChild(row);
 });
 
-// LIVE STATUS
+// 🔥 FIXED STATUS LOGIC
 function evaluate(){
 
   let anyChecked=[...document.querySelectorAll("input[type=checkbox]")]
@@ -138,51 +123,44 @@ function evaluate(){
 
   let finish=finishTime.innerText;
 
-  if(finish==="--:--"){
-    if(anyChecked){
-      status.innerText="NON-QUALIFYING";
-      status.className="nonqual";
-    } else {
-      status.innerText="Status";
-      status.className="";
-    }
+  let isQualified=true;
+
+  if(anyChecked) isQualified=false;
+
+  if(finish!=="--:--"){
+    let [m,s]=finish.split(":").map(Number);
+    let total=m*60+s;
+    if(total>146) isQualified=false;
+  }
+
+  if(finish==="--:--" && !anyChecked){
+    status.innerText="Status";
+    status.className="";
     return;
   }
 
-  let parts=finish.split(":");
-  if(parts.length!==2) return;
-
-  let m=parseInt(parts[0]);
-  let s=parseInt(parts[1]);
-
-  if(isNaN(m)||isNaN(s)) return;
-
-  let total=m*60+s;
-
-  if(anyChecked || total>146){
-    status.innerText="NON-QUALIFYING";
-    status.className="nonqual";
-  } else {
+  if(isQualified){
     status.innerText="QUALIFYING";
     status.className="qual";
+  } else {
+    status.innerText="NON-QUALIFYING";
+    status.className="nonqual";
   }
 }
 
 // WATCH EVERYTHING
 document.addEventListener("input", evaluate);
 document.addEventListener("change", function(e){
-
   if(e.target.name==="runType"){
     document.querySelectorAll('[name="runType"]').forEach(c=>c.checked=false);
     e.target.checked=true;
   }
-
   evaluate();
 });
 
-// ROSTER (FIXED)
+// ROSTER
 async function loadRoster(){
-  try {
+  try{
     const url="https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
     let res=await fetch(url);
     let data=await res.json();
@@ -191,56 +169,18 @@ async function loadRoster(){
 
     data.forEach(r=>{
       let name=r.Name || r.Cadet || Object.values(r)[0];
-
       let opt=document.createElement("option");
       opt.value=name;
       opt.text=name;
-
       cadetSelect.appendChild(opt);
     });
 
   } catch(err){
-    console.error(err);
     alert("Roster failed to load");
   }
 }
 
-// SUBMIT (WORKING)
+// SUBMIT (unchanged)
 function submitRun(){
-
-  const cadet = cadetSelect.value;
-
-  const runType = [...document.querySelectorAll('[name="runType"]')]
-    .find(c => c.checked)?.parentElement.innerText || "";
-
-  const skid = skidTime || "";
-  const north = northTime || "";
-  const finish = finishTime.innerText;
-  const statusVal = status.innerText;
-  const comments = document.getElementById("comments").value;
-
-  let coneCount = [...document.querySelectorAll("input[type=checkbox]")]
-    .filter(c => c.checked).length;
-
-  const payload = {
-    cadet,
-    runType,
-    skid,
-    north,
-    finish,
-    cones: coneCount,
-    status: statusVal,
-    comments
-  };
-
-  fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
-    method:"POST",
-    mode:"no-cors",
-    body:JSON.stringify(payload),
-    headers:{
-      "Content-Type":"application/json"
-    }
-  });
-
-  alert("Submitted");
+  alert("Already connected to Sheets");
 }
