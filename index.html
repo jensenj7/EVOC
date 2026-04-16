@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EVOC App</title>
+
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+
+<link rel="icon" href="EVOC 192.png">
 </head>
 
 <body>
@@ -38,10 +42,11 @@
   </div>
 
   <div class="middle-row">
+
     <div class="left-panel">
-      <div onclick="editSplit('skid')" id="skidBtn">Skid Exit</div>
-      <div onclick="editSplit('north')" id="northBtn">North Intersection</div>
-      <div onclick="editSplit('finish')" class="finish">
+      <div onclick="handleSplit('skid')" id="skidBtn">Skid Exit</div>
+      <div onclick="handleSplit('north')" id="northBtn">North Intersection</div>
+      <div onclick="handleSplit('finish')" id="finishBtn">
         End Time: <span id="finishTime">--:--</span>
       </div>
     </div>
@@ -49,6 +54,7 @@
     <div class="timer-box">
       <div id="timerDisplay">00:00</div>
     </div>
+
   </div>
 
   <div class="table-header">
