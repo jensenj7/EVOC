@@ -1,4 +1,3 @@
-// PIN
 function checkPin(){
   if(document.getElementById("pinInput").value==="1776"){
     document.getElementById("pinScreen").classList.remove("active");
@@ -92,7 +91,7 @@ coneList.forEach(name=>{
     <div>${name}</div>
     <input type="checkbox">
     <input type="checkbox">
-    <input type="number" min="0">
+    <input type="text" placeholder="">
   `;
 
   container.appendChild(row);
@@ -126,7 +125,7 @@ async function loadRoster(){
   });
 }
 
-// RUN TYPE (single select)
+// RUN TYPE SINGLE SELECT
 document.addEventListener("change",e=>{
   if(e.target.name==="runType"){
     document.querySelectorAll('[name="runType"]').forEach(c=>c.checked=false);
@@ -135,5 +134,5 @@ document.addEventListener("change",e=>{
 });
 
 function submitRun(){
-  alert("Next: connect Google Sheets");
+  alert("Next step: connect Google Sheets");
 }
