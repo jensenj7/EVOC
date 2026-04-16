@@ -44,11 +44,16 @@ function clearAll() {
   updateDisplay();
   pauseTimer();
 
+  skidTime = null;
+  northTime = null;
+
   document.getElementById("finishTime").innerText = "--:--";
   document.getElementById("skidBtn").innerText = "Skid Exit";
   document.getElementById("northBtn").innerText = "North Intersection";
 
   document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
+  document.querySelectorAll("input[type=number]").forEach(n=>n.value="");
+
   document.getElementById("status").innerText = "STATUS: --";
 }
 
@@ -70,15 +75,17 @@ function setSplit(type) {
   }
 }
 
-// ✏️ EDIT TIMES
+// ✏️ EDIT TIME
 function editTime(field) {
   let val = prompt("Enter time MM:SS");
   if (!val) return;
 
-  if (field === "finish") document.getElementById("finishTime").innerText = val;
+  if (field === "finish") {
+    document.getElementById("finishTime").innerText = val;
+  }
 }
 
-// ⏱️ FORMAT
+// FORMAT
 function formatTime(sec) {
   let m = String(Math.floor(sec/60)).padStart(2,'0');
   let s = String(sec%60).padStart(2,'0');
@@ -99,9 +106,14 @@ const container = document.getElementById("conesContainer");
 coneList.forEach(name=>{
   let row = document.createElement("div");
   row.className="row";
-  row.innerHTML = `${name}
+
+  row.innerHTML = `
+    <label>${name}</label>
     <input type="checkbox">
-    <input type="checkbox">`;
+    <input type="checkbox">
+    <input type="number" min="0" placeholder="#">
+  `;
+
   container.appendChild(row);
 });
 
@@ -124,7 +136,7 @@ function evaluate() {
   }
 }
 
-// 📥 ROSTER (Google Sheets)
+// 📥 ROSTER
 async function loadRoster() {
   const url = "https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
   let res = await fetch(url);
@@ -139,7 +151,15 @@ async function loadRoster() {
   });
 }
 
-// 📤 SUBMIT (you will connect Apps Script later)
+// 📤 SUBMIT
 function submitRun() {
-  alert("Submission ready (connect Google Apps Script next)");
+  alert("Next step: connect Google Sheets submission");
 }
+
+// 🎯 RUN TYPE (single select behavior)
+document.addEventListener("change", function(e){
+  if (e.target.name === "runType") {
+    document.querySelectorAll('input[name="runType"]').forEach(c=>c.checked=false);
+    e.target.checked = true;
+  }
+});
