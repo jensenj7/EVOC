@@ -1,74 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EVOC App</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link rel="manifest" href="manifest.json"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EVOC App</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- 🔐 PIN SCREEN -->
+<!-- PIN -->
 <div id="pinScreen" class="screen active">
   <h1>EVOC Access</h1>
-  <input type="password" id="pinInput" placeholder="Enter PIN"/>
+  <input type="password" id="pinInput" placeholder="Enter PIN">
   <button onclick="checkPin()">Enter</button>
 </div>
 
-<!-- 🚔 MAIN APP -->
 <div id="appScreen" class="screen">
 
-  <!-- TOP ROW -->
-  <header class="top-row">
-    <select id="cadetSelect"></select>
-
-    <div class="run-types">
-      <label><input type="checkbox" name="runType" value="Practice"> Practice</label>
-      <label><input type="checkbox" name="runType" value="Qualifying"> Qualifying</label>
-      <label><input type="checkbox" name="runType" value="Remedial"> Remedial</label>
+  <!-- TOP -->
+  <div class="top-bar">
+    <div class="cadet-block">
+      <label>Cadet</label>
+      <select id="cadetSelect"></select>
     </div>
-  </header>
 
-  <!-- CONTROLS -->
-  <div class="controls-row">
+    <div class="run-block">
+      <label><input type="checkbox" name="runType"> Practice Run</label>
+      <label><input type="checkbox" name="runType"> Qualifying Run</label>
+      <label><input type="checkbox" name="runType"> Remedial</label>
+    </div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="button-row">
     <button onclick="startTimer()">Start</button>
     <button onclick="pauseTimer()">Pause</button>
     <button onclick="endTimer()">End</button>
     <button onclick="clearAll()">Clear</button>
   </div>
 
-  <!-- MAIN ROW -->
-  <div class="main-row">
+  <!-- SPLIT + TIMER -->
+  <div class="middle-row">
 
-    <!-- LEFT -->
-    <div class="splits-panel">
+    <div class="left-panel">
       <div onclick="setSplit('skid')" id="skidBtn">Skid Exit</div>
       <div onclick="setSplit('north')" id="northBtn">North Intersection</div>
-
       <div class="finish">
-        Finish:
-        <span onclick="editTime('finish')" id="finishTime">--:--</span>
+        End Time:
+        <span id="finishTime" onclick="editTime('finish')">--:--</span>
       </div>
     </div>
 
-    <!-- RIGHT -->
-    <div class="timer-panel">
+    <div class="timer-box">
       <div id="timerDisplay">00:00</div>
     </div>
 
   </div>
 
-  <div id="status" class="status">STATUS: --</div>
+  <!-- TABLE HEADER -->
+  <div class="table-header">
+    <div>Cones Location</div>
+    <div>Inside</div>
+    <div>Outside</div>
+    <div># Hit</div>
+  </div>
 
-  <!-- CONES -->
-  <div class="cones" id="conesContainer"></div>
+  <!-- TABLE -->
+  <div id="conesContainer"></div>
 
   <!-- COMMENTS -->
-  <textarea id="comments" placeholder="Instructor Comments"></textarea>
+  <div class="comments-box">
+    <label>Instructor Comments</label>
+    <textarea id="comments"></textarea>
+  </div>
 
-  <button class="submit" onclick="submitRun()">Submit</button>
+  <!-- FOOTER -->
+  <div class="footer">
+    <div id="status">Qualifying / Non-Qualifying</div>
+    <button onclick="submitRun()">Submit</button>
+  </div>
 
 </div>
 
