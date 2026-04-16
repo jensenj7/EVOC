@@ -130,7 +130,7 @@ coneList.forEach(name=>{
   conesContainer.appendChild(row);
 });
 
-// STATUS
+// LIVE STATUS
 function evaluate(){
 
   let anyChecked=[...document.querySelectorAll("input[type=checkbox]")]
@@ -149,7 +149,14 @@ function evaluate(){
     return;
   }
 
-  let [m,s]=finish.split(":").map(Number);
+  let parts=finish.split(":");
+  if(parts.length!==2) return;
+
+  let m=parseInt(parts[0]);
+  let s=parseInt(parts[1]);
+
+  if(isNaN(m)||isNaN(s)) return;
+
   let total=m*60+s;
 
   if(anyChecked || total>146){
@@ -161,32 +168,44 @@ function evaluate(){
   }
 }
 
-// WATCH
+// WATCH EVERYTHING
+document.addEventListener("input", evaluate);
 document.addEventListener("change", function(e){
-  if(e.target.type==="checkbox"){
-    evaluate();
-  }
 
   if(e.target.name==="runType"){
     document.querySelectorAll('[name="runType"]').forEach(c=>c.checked=false);
     e.target.checked=true;
   }
+
+  evaluate();
 });
 
-// ROSTER
+// ROSTER (FIXED)
 async function loadRoster(){
-  const url="https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
-  let res=await fetch(url);
-  let data=await res.json();
+  try {
+    const url="https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
+    let res=await fetch(url);
+    let data=await res.json();
 
-  data.forEach(r=>{
-    let opt=document.createElement("option");
-    opt.text=r.Name || Object.values(r)[0];
-    cadetSelect.add(opt);
-  });
+    cadetSelect.innerHTML="<option value=''>Select Cadet</option>";
+
+    data.forEach(r=>{
+      let name=r.Name || r.Cadet || Object.values(r)[0];
+
+      let opt=document.createElement("option");
+      opt.value=name;
+      opt.text=name;
+
+      cadetSelect.appendChild(opt);
+    });
+
+  } catch(err){
+    console.error(err);
+    alert("Roster failed to load");
+  }
 }
 
-// ✅ FIXED SUBMIT (NO-CORS SAFE)
+// SUBMIT (WORKING)
 function submitRun(){
 
   const cadet = cadetSelect.value;
@@ -215,11 +234,11 @@ function submitRun(){
   };
 
   fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify(payload),
-    headers: {
-      "Content-Type": "application/json"
+    method:"POST",
+    mode:"no-cors",
+    body:JSON.stringify(payload),
+    headers:{
+      "Content-Type":"application/json"
     }
   });
 
