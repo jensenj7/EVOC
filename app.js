@@ -186,6 +186,51 @@ async function loadRoster(){
   });
 }
 
-function submitRun(){
-  alert("Next step: connect Google Sheets");
+async function submitRun(){
+
+  const cadet = cadetSelect.value;
+
+  const runType = [...document.querySelectorAll('[name="runType"]')]
+    .find(c => c.checked)?.parentElement.innerText || "";
+
+  const skid = skidTime || "";
+  const north = northTime || "";
+  const finish = finishTime.innerText;
+  const statusVal = status.innerText;
+  const comments = commentsBox();
+
+  // Count cone hits
+  let coneCount = [...document.querySelectorAll("input[type=checkbox]")]
+    .filter(c => c.checked).length;
+
+  const payload = {
+    cadet,
+    runType,
+    skid,
+    north,
+    finish,
+    cones: coneCount,
+    status: statusVal,
+    comments
+  };
+
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    alert("Run submitted successfully");
+
+  } catch (err){
+    alert("Submission failed");
+    console.error(err);
+  }
+}
+
+function commentsBox(){
+  return document.getElementById("comments").value;
 }
