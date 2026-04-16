@@ -21,13 +21,15 @@ function startTimer(){
     timer=setInterval(()=>{
       seconds++;
       updateDisplay();
-      updateSplits();
       evaluate();
     },1000);
   }
 }
 
-function pauseTimer(){ clearInterval(timer); running=false; }
+function pauseTimer(){
+  clearInterval(timer);
+  running=false;
+}
 
 function endTimer(){
   pauseTimer();
@@ -36,9 +38,12 @@ function endTimer(){
 }
 
 function clearAll(){
-  seconds=0; updateDisplay(); pauseTimer();
+  seconds=0;
+  updateDisplay();
+  pauseTimer();
 
-  skidTime=null; northTime=null;
+  skidTime=null;
+  northTime=null;
 
   skidBtn.innerText="Skid Exit";
   northBtn.innerText="North Intersection";
@@ -50,34 +55,46 @@ function clearAll(){
   });
 
   status.innerText="Status";
+  status.className="";
 }
 
 // SPLITS
-let skidTime=null, northTime=null;
-
-function updateSplits(){
-  if(skidTime===null) skidBtn.dataset.time=format(seconds);
-  if(northTime===null) northBtn.dataset.time=format(seconds);
-}
+let skidTime=null;
+let northTime=null;
 
 function editSplit(type){
+
   if(type==="skid"){
-    if(!skidTime) skidTime=format(seconds);
-    let val=prompt("Enter Skid Exit Time", skidTime);
-    if(val) skidTime=val;
-    skidBtn.innerText=skidTime;
+    if(!skidTime){
+      skidTime=format(seconds);
+      skidBtn.innerText=skidTime;
+    } else {
+      let val=prompt("Edit Skid Exit Time", skidTime);
+      if(val){
+        skidTime=val;
+        skidBtn.innerText=val;
+      }
+    }
   }
 
   if(type==="north"){
-    if(!northTime) northTime=format(seconds);
-    let val=prompt("Enter North Intersection Time", northTime);
-    if(val) northTime=val;
-    northBtn.innerText=northTime;
+    if(!northTime){
+      northTime=format(seconds);
+      northBtn.innerText=northTime;
+    } else {
+      let val=prompt("Edit North Intersection Time", northTime);
+      if(val){
+        northTime=val;
+        northBtn.innerText=val;
+      }
+    }
   }
 
   if(type==="finish"){
-    let val=prompt("Enter Finish Time", finishTime.innerText);
-    if(val) finishTime.innerText=val;
+    let val=prompt("Edit Finish Time", finishTime.innerText);
+    if(val){
+      finishTime.innerText=val;
+    }
   }
 
   evaluate();
@@ -91,11 +108,13 @@ function format(sec){
 }
 
 // TABLE
-const coneList=[ "Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry","Skid Pan Turn 1",
+const coneList=[
+"Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry","Skid Pan Turn 1",
 "Skid Pan Turn 2","Skid Pan Turn 3","Exit Skid Pan","Middle Intersection",
 "South Intersection","Slalom","Northeast Straight","Northeast Turn",
 "North Straight","Northwest Turn","North Intersection","360 Turn",
-"West Straight","Southwest Turn","Serpentine","Lane Change"];
+"West Straight","Southwest Turn","Serpentine","Lane Change"
+];
 
 coneList.forEach(name=>{
   let row=document.createElement("div");
@@ -103,19 +122,32 @@ coneList.forEach(name=>{
 
   row.innerHTML=`
     <div>${name}</div>
-    <input type="checkbox" onchange="evaluate()">
-    <input type="checkbox" onchange="evaluate()">
+    <input type="checkbox">
+    <input type="checkbox">
     <input type="text">
   `;
+
   conesContainer.appendChild(row);
 });
 
-// EVALUATE (LIVE)
+// LIVE STATUS
 function evaluate(){
-  let anyChecked=[...document.querySelectorAll("input[type=checkbox]")].some(c=>c.checked);
+
+  let anyChecked=[...document.querySelectorAll("input[type=checkbox]")]
+    .some(c=>c.checked);
 
   let finish=finishTime.innerText;
-  if(finish==="--:--") return;
+
+  if(finish==="--:--"){
+    if(anyChecked){
+      status.innerText="NON-QUALIFYING";
+      status.className="nonqual";
+    } else {
+      status.innerText="Status";
+      status.className="";
+    }
+    return;
+  }
 
   let [m,s]=finish.split(":").map(Number);
   let total=m*60+s;
@@ -129,6 +161,18 @@ function evaluate(){
   }
 }
 
+// WATCH CHECKBOXES
+document.addEventListener("change", function(e){
+  if(e.target.type==="checkbox"){
+    evaluate();
+  }
+
+  if(e.target.name==="runType"){
+    document.querySelectorAll('[name="runType"]').forEach(c=>c.checked=false);
+    e.target.checked=true;
+  }
+});
+
 // ROSTER
 async function loadRoster(){
   const url="https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
@@ -141,14 +185,6 @@ async function loadRoster(){
     cadetSelect.add(opt);
   });
 }
-
-// RUN TYPE SINGLE SELECT
-document.addEventListener("change",e=>{
-  if(e.target.name==="runType"){
-    document.querySelectorAll('[name="runType"]').forEach(c=>c.checked=false);
-    e.target.checked=true;
-  }
-});
 
 function submitRun(){
   alert("Next step: connect Google Sheets");
