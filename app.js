@@ -21,6 +21,7 @@ function startTimer(){
     timer=setInterval(()=>{
       seconds++;
       updateDisplay();
+      evaluate();
     },1000);
   }
 }
@@ -36,49 +37,59 @@ function endTimer(){
   evaluate();
 }
 
-// 🔥 NEW UNIFIED SPLIT HANDLER
+function clearAll(){
+  seconds=0;
+  updateDisplay();
+  pauseTimer();
+
+  skidTime=null;
+  northTime=null;
+
+  skidBtn.innerText="Skid Exit";
+  northBtn.innerText="North Intersection";
+  finishTime.innerText="--:--";
+
+  document.querySelectorAll("input").forEach(i=>{
+    if(i.type==="checkbox") i.checked=false;
+    if(i.type==="text") i.value="";
+  });
+
+  status.innerText="Status";
+  status.className="";
+}
+
+// SPLITS
 let skidTime=null, northTime=null;
 
 function handleSplit(type){
 
-  // SKID
   if(type==="skid"){
     if(!skidTime){
       skidTime=format(seconds);
       skidBtn.innerText=skidTime;
     } else {
-      let val=prompt("Edit Skid Exit Time", skidTime);
-      if(val){
-        skidTime=val;
-        skidBtn.innerText=val;
-      }
+      let val=prompt("Edit Skid Time", skidTime);
+      if(val){ skidTime=val; skidBtn.innerText=val; }
     }
   }
 
-  // NORTH
   if(type==="north"){
     if(!northTime){
       northTime=format(seconds);
       northBtn.innerText=northTime;
     } else {
-      let val=prompt("Edit North Intersection Time", northTime);
-      if(val){
-        northTime=val;
-        northBtn.innerText=val;
-      }
+      let val=prompt("Edit North Time", northTime);
+      if(val){ northTime=val; northBtn.innerText=val; }
     }
   }
 
-  // FINISH (NEW BEHAVIOR)
   if(type==="finish"){
     if(finishTime.innerText==="--:--"){
       pauseTimer();
       finishTime.innerText=format(seconds);
     } else {
       let val=prompt("Edit Finish Time", finishTime.innerText);
-      if(val){
-        finishTime.innerText=val;
-      }
+      if(val) finishTime.innerText=val;
     }
   }
 
@@ -115,7 +126,7 @@ coneList.forEach(name=>{
   conesContainer.appendChild(row);
 });
 
-// 🔥 FIXED STATUS LOGIC
+// 🔥 CORRECT STATUS LOGIC
 function evaluate(){
 
   let anyChecked=[...document.querySelectorAll("input[type=checkbox]")]
@@ -123,38 +134,39 @@ function evaluate(){
 
   let finish=finishTime.innerText;
 
-  let isQualified=true;
-
-  if(anyChecked) isQualified=false;
-
-  if(finish!=="--:--"){
-    let [m,s]=finish.split(":").map(Number);
-    let total=m*60+s;
-    if(total>146) isQualified=false;
-  }
-
-  if(finish==="--:--" && !anyChecked){
-    status.innerText="Status";
-    status.className="";
+  // If no time yet
+  if(finish==="--:--"){
+    if(anyChecked){
+      status.innerText="NON-QUALIFYING";
+      status.className="nonqual";
+    } else {
+      status.innerText="Status";
+      status.className="";
+    }
     return;
   }
 
-  if(isQualified){
-    status.innerText="QUALIFYING";
-    status.className="qual";
-  } else {
+  let [m,s]=finish.split(":").map(Number);
+  let total=m*60+s;
+
+  if(anyChecked || total>145){
     status.innerText="NON-QUALIFYING";
     status.className="nonqual";
+  } else {
+    status.innerText="QUALIFYING";
+    status.className="qual";
   }
 }
 
-// WATCH EVERYTHING
+// WATCH
 document.addEventListener("input", evaluate);
 document.addEventListener("change", function(e){
+
   if(e.target.name==="runType"){
     document.querySelectorAll('[name="runType"]').forEach(c=>c.checked=false);
     e.target.checked=true;
   }
+
   evaluate();
 });
 
@@ -165,22 +177,55 @@ async function loadRoster(){
     let res=await fetch(url);
     let data=await res.json();
 
-    cadetSelect.innerHTML="<option value=''>Select Cadet</option>";
+    cadetSelect.innerHTML="<option>Select Cadet</option>";
 
     data.forEach(r=>{
-      let name=r.Name || r.Cadet || Object.values(r)[0];
+      let name=r.Name || Object.values(r)[0];
       let opt=document.createElement("option");
       opt.value=name;
       opt.text=name;
       cadetSelect.appendChild(opt);
     });
 
-  } catch(err){
-    alert("Roster failed to load");
+  } catch{
+    alert("Roster failed");
   }
 }
 
-// SUBMIT (unchanged)
+// ✅ WORKING SUBMIT
 function submitRun(){
-  alert("Already connected to Sheets");
+
+  const cadet = cadetSelect.value;
+
+  const runType = [...document.querySelectorAll('[name="runType"]')]
+    .find(c => c.checked)?.parentElement.innerText || "";
+
+  const skid = skidTime || "";
+  const north = northTime || "";
+  const finish = finishTime.innerText;
+  const statusVal = status.innerText;
+  const comments = document.getElementById("comments").value;
+
+  let coneCount = [...document.querySelectorAll("input[type=checkbox]")]
+    .filter(c => c.checked).length;
+
+  const payload = {
+    cadet,
+    runType,
+    skid,
+    north,
+    finish,
+    cones: coneCount,
+    status: statusVal,
+    comments
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
+    method:"POST",
+    mode:"no-cors",
+    body:JSON.stringify(payload),
+    headers:{ "Content-Type":"application/json" }
+  });
+
+  alert("Submitted");
 }
