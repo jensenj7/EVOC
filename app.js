@@ -1,7 +1,7 @@
 function checkPin(){
-  if(document.getElementById("pinInput").value==="1776"){
-    document.getElementById("pinScreen").classList.remove("active");
-    document.getElementById("appScreen").classList.add("active");
+  if(pinInput.value==="1776"){
+    pinScreen.classList.remove("active");
+    appScreen.classList.add("active");
     loadRoster();
   }
 }
@@ -18,7 +18,12 @@ function updateDisplay(){
 function startTimer(){
   if(!running){
     running=true;
-    timer=setInterval(()=>{seconds++;updateDisplay();},1000);
+    timer=setInterval(()=>{
+      seconds++;
+      updateDisplay();
+      updateSplits();
+      evaluate();
+    },1000);
   }
 }
 
@@ -32,6 +37,7 @@ function endTimer(){
 
 function clearAll(){
   seconds=0; updateDisplay(); pauseTimer();
+
   skidTime=null; northTime=null;
 
   skidBtn.innerText="Skid Exit";
@@ -40,32 +46,44 @@ function clearAll(){
 
   document.querySelectorAll("input").forEach(i=>{
     if(i.type==="checkbox") i.checked=false;
-    if(i.type==="number") i.value="";
+    if(i.type==="text") i.value="";
   });
 
-  status.innerText="Qualifying / Non-Qualifying";
+  status.innerText="Status";
 }
 
 // SPLITS
 let skidTime=null, northTime=null;
 
-function setSplit(type){
-  let t=format(seconds);
-
-  if(type==="skid" && !skidTime){
-    skidTime=t; skidBtn.innerText=t;
-  }
-  if(type==="north" && !northTime){
-    northTime=t; northBtn.innerText=t;
-  }
+function updateSplits(){
+  if(skidTime===null) skidBtn.dataset.time=format(seconds);
+  if(northTime===null) northBtn.dataset.time=format(seconds);
 }
 
-// EDIT
-function editTime(){
-  let t=prompt("Enter MM:SS");
-  if(t) finishTime.innerText=t;
+function editSplit(type){
+  if(type==="skid"){
+    if(!skidTime) skidTime=format(seconds);
+    let val=prompt("Enter Skid Exit Time", skidTime);
+    if(val) skidTime=val;
+    skidBtn.innerText=skidTime;
+  }
+
+  if(type==="north"){
+    if(!northTime) northTime=format(seconds);
+    let val=prompt("Enter North Intersection Time", northTime);
+    if(val) northTime=val;
+    northBtn.innerText=northTime;
+  }
+
+  if(type==="finish"){
+    let val=prompt("Enter Finish Time", finishTime.innerText);
+    if(val) finishTime.innerText=val;
+  }
+
+  evaluate();
 }
 
+// FORMAT
 function format(sec){
   let m=String(Math.floor(sec/60)).padStart(2,'0');
   let s=String(sec%60).padStart(2,'0');
@@ -73,15 +91,11 @@ function format(sec){
 }
 
 // TABLE
-const coneList=[
-"Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry","Skid Pan Turn 1",
+const coneList=[ "Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry","Skid Pan Turn 1",
 "Skid Pan Turn 2","Skid Pan Turn 3","Exit Skid Pan","Middle Intersection",
 "South Intersection","Slalom","Northeast Straight","Northeast Turn",
 "North Straight","Northwest Turn","North Intersection","360 Turn",
-"West Straight","Southwest Turn","Serpentine","Lane Change"
-];
-
-const container=document.getElementById("conesContainer");
+"West Straight","Southwest Turn","Serpentine","Lane Change"];
 
 coneList.forEach(name=>{
   let row=document.createElement("div");
@@ -89,18 +103,21 @@ coneList.forEach(name=>{
 
   row.innerHTML=`
     <div>${name}</div>
-    <input type="checkbox">
-    <input type="checkbox">
-    <input type="text" placeholder="">
+    <input type="checkbox" onchange="evaluate()">
+    <input type="checkbox" onchange="evaluate()">
+    <input type="text">
   `;
-
-  container.appendChild(row);
+  conesContainer.appendChild(row);
 });
 
-// EVALUATE
+// EVALUATE (LIVE)
 function evaluate(){
   let anyChecked=[...document.querySelectorAll("input[type=checkbox]")].some(c=>c.checked);
-  let [m,s]=finishTime.innerText.split(":").map(Number);
+
+  let finish=finishTime.innerText;
+  if(finish==="--:--") return;
+
+  let [m,s]=finish.split(":").map(Number);
   let total=m*60+s;
 
   if(anyChecked || total>146){
