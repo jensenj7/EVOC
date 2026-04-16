@@ -1,165 +1,139 @@
-// 🔐 PIN
-function checkPin() {
-  if (document.getElementById("pinInput").value === "1776") {
+// PIN
+function checkPin(){
+  if(document.getElementById("pinInput").value==="1776"){
     document.getElementById("pinScreen").classList.remove("active");
     document.getElementById("appScreen").classList.add("active");
     loadRoster();
   }
 }
 
-// ⏱️ TIMER
-let seconds = 0;
-let timer = null;
-let running = false;
+// TIMER
+let seconds=0, timer=null, running=false;
 
-function updateDisplay() {
-  let m = String(Math.floor(seconds / 60)).padStart(2,'0');
-  let s = String(seconds % 60).padStart(2,'0');
-  document.getElementById("timerDisplay").innerText = `${m}:${s}`;
+function updateDisplay(){
+  let m=String(Math.floor(seconds/60)).padStart(2,'0');
+  let s=String(seconds%60).padStart(2,'0');
+  timerDisplay.innerText=`${m}:${s}`;
 }
 
-function startTimer() {
-  if (!running) {
-    running = true;
-    timer = setInterval(() => {
-      seconds++;
-      updateDisplay();
-    }, 1000);
+function startTimer(){
+  if(!running){
+    running=true;
+    timer=setInterval(()=>{seconds++;updateDisplay();},1000);
   }
 }
 
-function pauseTimer() {
-  clearInterval(timer);
-  running = false;
-}
+function pauseTimer(){ clearInterval(timer); running=false; }
 
-function endTimer() {
+function endTimer(){
   pauseTimer();
-  document.getElementById("finishTime").innerText = formatTime(seconds);
+  finishTime.innerText=format(seconds);
   evaluate();
 }
 
-function clearAll() {
-  seconds = 0;
-  updateDisplay();
-  pauseTimer();
+function clearAll(){
+  seconds=0; updateDisplay(); pauseTimer();
+  skidTime=null; northTime=null;
 
-  skidTime = null;
-  northTime = null;
+  skidBtn.innerText="Skid Exit";
+  northBtn.innerText="North Intersection";
+  finishTime.innerText="--:--";
 
-  document.getElementById("finishTime").innerText = "--:--";
-  document.getElementById("skidBtn").innerText = "Skid Exit";
-  document.getElementById("northBtn").innerText = "North Intersection";
+  document.querySelectorAll("input").forEach(i=>{
+    if(i.type==="checkbox") i.checked=false;
+    if(i.type==="number") i.value="";
+  });
 
-  document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
-  document.querySelectorAll("input[type=number]").forEach(n=>n.value="");
-
-  document.getElementById("status").innerText = "STATUS: --";
+  status.innerText="Qualifying / Non-Qualifying";
 }
 
-// ⏱️ SPLITS
-let skidTime = null;
-let northTime = null;
+// SPLITS
+let skidTime=null, northTime=null;
 
-function setSplit(type) {
-  let time = formatTime(seconds);
+function setSplit(type){
+  let t=format(seconds);
 
-  if (type === "skid" && !skidTime) {
-    skidTime = time;
-    document.getElementById("skidBtn").innerText = time;
+  if(type==="skid" && !skidTime){
+    skidTime=t; skidBtn.innerText=t;
   }
-
-  if (type === "north" && !northTime) {
-    northTime = time;
-    document.getElementById("northBtn").innerText = time;
+  if(type==="north" && !northTime){
+    northTime=t; northBtn.innerText=t;
   }
 }
 
-// ✏️ EDIT TIME
-function editTime(field) {
-  let val = prompt("Enter time MM:SS");
-  if (!val) return;
-
-  if (field === "finish") {
-    document.getElementById("finishTime").innerText = val;
-  }
+// EDIT
+function editTime(){
+  let t=prompt("Enter MM:SS");
+  if(t) finishTime.innerText=t;
 }
 
-// FORMAT
-function formatTime(sec) {
-  let m = String(Math.floor(sec/60)).padStart(2,'0');
-  let s = String(sec%60).padStart(2,'0');
+function format(sec){
+  let m=String(Math.floor(sec/60)).padStart(2,'0');
+  let s=String(sec%60).padStart(2,'0');
   return `${m}:${s}`;
 }
 
-// 🚨 CONES
-const coneList = [
-  "Diminishing Lane","Entry Skid Pan","Turn 1 Entry","Turn 1","Turn 2",
-  "Turn 3","Exit Skid Pan","Middle Intersection","South Intersection",
-  "Slalom","NE Straight","NE Turn","North Straight","NW Turn",
-  "North Intersection","360 Turn","West Straight","SW Turn",
-  "Serpentine","Lane Change"
+// TABLE
+const coneList=[
+"Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry","Skid Pan Turn 1",
+"Skid Pan Turn 2","Skid Pan Turn 3","Exit Skid Pan","Middle Intersection",
+"South Intersection","Slalom","Northeast Straight","Northeast Turn",
+"North Straight","Northwest Turn","North Intersection","360 Turn",
+"West Straight","Southwest Turn","Serpentine","Lane Change"
 ];
 
-const container = document.getElementById("conesContainer");
+const container=document.getElementById("conesContainer");
 
 coneList.forEach(name=>{
-  let row = document.createElement("div");
-  row.className="row";
+  let row=document.createElement("div");
+  row.className="table-row";
 
-  row.innerHTML = `
-    <label>${name}</label>
+  row.innerHTML=`
+    <div>${name}</div>
     <input type="checkbox">
     <input type="checkbox">
-    <input type="number" min="0" placeholder="#">
+    <input type="number" min="0">
   `;
 
   container.appendChild(row);
 });
 
-// 🧮 EVALUATION
-function evaluate() {
-  let cones = [...document.querySelectorAll("input[type=checkbox]")].some(c=>c.checked);
-  let finish = document.getElementById("finishTime").innerText;
+// EVALUATE
+function evaluate(){
+  let anyChecked=[...document.querySelectorAll("input[type=checkbox]")].some(c=>c.checked);
+  let [m,s]=finishTime.innerText.split(":").map(Number);
+  let total=m*60+s;
 
-  let [m,s] = finish.split(":").map(Number);
-  let total = m*60+s;
-
-  let status = document.getElementById("status");
-
-  if (cones || total > 146) {
-    status.innerText = "STATUS: NON-QUALIFYING";
-    status.className="status nonqual";
+  if(anyChecked || total>146){
+    status.innerText="NON-QUALIFYING";
+    status.className="nonqual";
   } else {
-    status.innerText = "STATUS: QUALIFYING";
-    status.className="status qual";
+    status.innerText="QUALIFYING";
+    status.className="qual";
   }
 }
 
-// 📥 ROSTER
-async function loadRoster() {
-  const url = "https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
-  let res = await fetch(url);
-  let data = await res.json();
-
-  let select = document.getElementById("cadetSelect");
+// ROSTER
+async function loadRoster(){
+  const url="https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
+  let res=await fetch(url);
+  let data=await res.json();
 
   data.forEach(r=>{
-    let opt = document.createElement("option");
-    opt.text = r.Name || Object.values(r)[0];
-    select.add(opt);
+    let opt=document.createElement("option");
+    opt.text=r.Name || Object.values(r)[0];
+    cadetSelect.add(opt);
   });
 }
 
-// 📤 SUBMIT
-function submitRun() {
-  alert("Next step: connect Google Sheets submission");
-}
-
-// 🎯 RUN TYPE (single select behavior)
-document.addEventListener("change", function(e){
-  if (e.target.name === "runType") {
-    document.querySelectorAll('input[name="runType"]').forEach(c=>c.checked=false);
-    e.target.checked = true;
+// RUN TYPE (single select)
+document.addEventListener("change",e=>{
+  if(e.target.name==="runType"){
+    document.querySelectorAll('[name="runType"]').forEach(c=>c.checked=false);
+    e.target.checked=true;
   }
 });
+
+function submitRun(){
+  alert("Next: connect Google Sheets");
+}
