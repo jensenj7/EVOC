@@ -29,7 +29,7 @@ input, select, textarea, button {
   flex-direction:column;
 }
 
-/* BUTTON ROW */
+/* BUTTONS */
 .button-row {
   display:flex;
   justify-content:space-between;
@@ -74,9 +74,9 @@ input, select, textarea, button {
 /* TABLE */
 .table-header, .table-row {
   display:grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2.2fr 0.6fr 0.6fr 1.2fr;
   align-items:center;
-  gap:10px;
+  gap:5px;
 }
 
 .table-header {
@@ -86,16 +86,22 @@ input, select, textarea, button {
 }
 
 .table-row {
-  margin:3px 0;
+  margin:2px 0;
+}
+
+.center {
+  text-align:center;
 }
 
 .table-row input[type="checkbox"] {
   width:18px;
   height:18px;
+  margin-left:5px;
 }
 
 .table-row input[type="number"] {
-  width:60px;
+  width:100%;
+  padding:5px;
 }
 
 /* COMMENTS */
@@ -119,6 +125,7 @@ textarea {
 .footer button {
   background:green;
   color:white;
+  padding:10px 20px;
 }
 
 .qual { color:lime; }
