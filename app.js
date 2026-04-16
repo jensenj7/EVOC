@@ -130,7 +130,7 @@ coneList.forEach(name=>{
   conesContainer.appendChild(row);
 });
 
-// LIVE STATUS
+// STATUS
 function evaluate(){
 
   let anyChecked=[...document.querySelectorAll("input[type=checkbox]")]
@@ -161,7 +161,7 @@ function evaluate(){
   }
 }
 
-// WATCH CHECKBOXES
+// WATCH
 document.addEventListener("change", function(e){
   if(e.target.type==="checkbox"){
     evaluate();
@@ -186,7 +186,8 @@ async function loadRoster(){
   });
 }
 
-async function submitRun(){
+// ✅ FIXED SUBMIT (NO-CORS SAFE)
+function submitRun(){
 
   const cadet = cadetSelect.value;
 
@@ -197,9 +198,8 @@ async function submitRun(){
   const north = northTime || "";
   const finish = finishTime.innerText;
   const statusVal = status.innerText;
-  const comments = commentsBox();
+  const comments = document.getElementById("comments").value;
 
-  // Count cone hits
   let coneCount = [...document.querySelectorAll("input[type=checkbox]")]
     .filter(c => c.checked).length;
 
@@ -214,23 +214,14 @@ async function submitRun(){
     comments
   };
 
-  try {
-    await fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+  fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
 
-    alert("Run submitted successfully");
-
-  } catch (err){
-    alert("Submission failed");
-    console.error(err);
-  }
-}
-
-function commentsBox(){
-  return document.getElementById("comments").value;
+  alert("Submitted");
 }
