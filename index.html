@@ -9,7 +9,6 @@
 
 <body>
 
-<!-- PIN -->
 <div id="pinScreen" class="screen active">
   <h1>EVOC Access</h1>
   <input type="password" id="pinInput" placeholder="Enter PIN">
@@ -40,7 +39,7 @@
     <button onclick="clearAll()">Clear</button>
   </div>
 
-  <!-- SPLIT + TIMER -->
+  <!-- MIDDLE -->
   <div class="middle-row">
 
     <div class="left-panel">
@@ -48,7 +47,7 @@
       <div onclick="setSplit('north')" id="northBtn">North Intersection</div>
       <div class="finish">
         End Time:
-        <span id="finishTime" onclick="editTime('finish')">--:--</span>
+        <span id="finishTime" onclick="editTime()">--:--</span>
       </div>
     </div>
 
@@ -61,9 +60,9 @@
   <!-- TABLE HEADER -->
   <div class="table-header">
     <div>Cones Location</div>
-    <div>Inside</div>
-    <div>Outside</div>
-    <div># Hit</div>
+    <div class="center">Inside</div>
+    <div class="center">Outside</div>
+    <div># / Gate</div>
   </div>
 
   <!-- TABLE -->
