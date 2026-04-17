@@ -42,11 +42,12 @@ function updateDisplay(){
   timerDisplay.innerText=`${m}:${s}`;
 }
 
-// SPLITS (FIXED EDITING)
+// SPLITS (UPDATED — NO TIMER INTERRUPTION)
 let skidTime=null, northTime=null;
 
 function handleSplit(type){
 
+  // SKID
   if(type==="skid"){
     if(!skidTime){
       skidTime=format(seconds);
@@ -60,6 +61,7 @@ function handleSplit(type){
     }
   }
 
+  // NORTH
   if(type==="north"){
     if(!northTime){
       northTime=format(seconds);
@@ -73,9 +75,10 @@ function handleSplit(type){
     }
   }
 
+  // FINISH (ONLY place timer can stop)
   if(type==="finish"){
     if(finishTimeValue.innerText==="--:--"){
-      pauseTimer();
+      pauseTimer(); // ✅ ONLY intentional stop
       finishTimeValue.innerText=format(seconds);
     } else {
       let val=prompt("Edit Finish Time", finishTimeValue.innerText);
@@ -157,7 +160,7 @@ coneList.forEach(name=>{
   conesContainer.appendChild(row);
 });
 
-// SUBMIT (FIXED + FULL CLEAR)
+// SUBMIT
 function submitRun(){
 
   const cadet = cadetSelect.value;
@@ -191,15 +194,13 @@ function submitRun(){
   alert("Submitted");
 }
 
-// 🔥 FULL RESET (FIXED)
+// CLEAR
 function clearAll(){
 
-  // Timer
   seconds=0;
   updateDisplay();
   pauseTimer();
 
-  // Splits
   skidTime=null;
   northTime=null;
 
@@ -207,23 +208,16 @@ function clearAll(){
   northBtn.innerText="North Intersection";
   finishTimeValue.innerText="--:--";
 
-  // DNF
   dnf=false;
   dnfBtn.classList.remove("active");
 
-  // Checkboxes
   document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
-
-  // Text inputs
   document.querySelectorAll("input[type=text]").forEach(t=>t.value="");
 
-  // Comments
   document.getElementById("comments").value="";
 
-  // Dropdown
   cadetSelect.selectedIndex=0;
 
-  // Status
   status.innerText="Status";
   status.className="";
 }
