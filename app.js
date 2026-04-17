@@ -33,7 +33,7 @@ function pauseTimer(){
 
 function endTimer(){
   pauseTimer();
-  finishTime.innerText=format(seconds);
+  finishTimeValue.innerText=format(seconds);
   evaluate();
 }
 
@@ -47,7 +47,7 @@ function clearAll(){
 
   skidBtn.innerText="Skid Exit";
   northBtn.innerText="North Intersection";
-  finishTime.innerText="--:--";
+  finishTimeValue.innerText="--:--";
 
   document.querySelectorAll("input").forEach(i=>{
     if(i.type==="checkbox") i.checked=false;
@@ -84,12 +84,12 @@ function handleSplit(type){
   }
 
   if(type==="finish"){
-    if(finishTime.innerText==="--:--"){
+    if(finishTimeValue.innerText==="--:--"){
       pauseTimer();
-      finishTime.innerText=format(seconds);
+      finishTimeValue.innerText=format(seconds);
     } else {
-      let val=prompt("Edit Finish Time", finishTime.innerText);
-      if(val) finishTime.innerText=val;
+      let val=prompt("Edit Finish Time", finishTimeValue.innerText);
+      if(val) finishTimeValue.innerText=val;
     }
   }
 
@@ -126,15 +126,14 @@ coneList.forEach(name=>{
   conesContainer.appendChild(row);
 });
 
-// 🔥 CORRECT STATUS LOGIC
+// 🔥 FIXED STATUS (THIS WILL WORK)
 function evaluate(){
 
   let anyChecked=[...document.querySelectorAll("input[type=checkbox]")]
     .some(c=>c.checked);
 
-  let finish=finishTime.innerText;
+  let finish = finishTimeValue.innerText.trim();
 
-  // If no time yet
   if(finish==="--:--"){
     if(anyChecked){
       status.innerText="NON-QUALIFYING";
@@ -146,10 +145,17 @@ function evaluate(){
     return;
   }
 
-  let [m,s]=finish.split(":").map(Number);
-  let total=m*60+s;
+  let parts = finish.split(":");
+  if(parts.length !== 2) return;
 
-  if(anyChecked || total>145){
+  let m = parseInt(parts[0]);
+  let s = parseInt(parts[1]);
+
+  if(isNaN(m) || isNaN(s)) return;
+
+  let total = m*60 + s;
+
+  if(anyChecked || total > 145){
     status.innerText="NON-QUALIFYING";
     status.className="nonqual";
   } else {
@@ -192,32 +198,20 @@ async function loadRoster(){
   }
 }
 
-// ✅ WORKING SUBMIT
+// ✅ RESTORED SUBMIT
 function submitRun(){
 
-  const cadet = cadetSelect.value;
-
-  const runType = [...document.querySelectorAll('[name="runType"]')]
-    .find(c => c.checked)?.parentElement.innerText || "";
-
-  const skid = skidTime || "";
-  const north = northTime || "";
-  const finish = finishTime.innerText;
-  const statusVal = status.innerText;
-  const comments = document.getElementById("comments").value;
-
-  let coneCount = [...document.querySelectorAll("input[type=checkbox]")]
-    .filter(c => c.checked).length;
-
   const payload = {
-    cadet,
-    runType,
-    skid,
-    north,
-    finish,
-    cones: coneCount,
-    status: statusVal,
-    comments
+    cadet: cadetSelect.value,
+    runType: [...document.querySelectorAll('[name="runType"]')]
+      .find(c => c.checked)?.parentElement.innerText || "",
+    skid: skidTime || "",
+    north: northTime || "",
+    finish: finishTimeValue.innerText,
+    cones: [...document.querySelectorAll("input[type=checkbox]")]
+      .filter(c => c.checked).length,
+    status: status.innerText,
+    comments: document.getElementById("comments").value
   };
 
   fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
