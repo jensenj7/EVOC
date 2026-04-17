@@ -1,10 +1,10 @@
-// ✅ RESTORE PIN FUNCTION
+// PIN
 function checkPin(){
   const pin = document.getElementById("pinInput").value;
 
   if(pin === "1776"){
-    document.getElementById("pinScreen").classList.remove("active");
-    document.getElementById("appScreen").classList.add("active");
+    pinScreen.classList.remove("active");
+    appScreen.classList.add("active");
     loadRoster();
   } else {
     alert("Incorrect PIN");
@@ -42,29 +42,47 @@ function updateDisplay(){
   timerDisplay.innerText=`${m}:${s}`;
 }
 
-// SPLITS
+// SPLITS (FIXED EDITING)
 let skidTime=null, northTime=null;
 
 function handleSplit(type){
+
+  if(type==="skid"){
+    if(!skidTime){
+      skidTime=format(seconds);
+      skidBtn.innerText=skidTime;
+    } else {
+      let val=prompt("Edit Skid Exit Time", skidTime);
+      if(val){
+        skidTime=val;
+        skidBtn.innerText=val;
+      }
+    }
+  }
+
+  if(type==="north"){
+    if(!northTime){
+      northTime=format(seconds);
+      northBtn.innerText=northTime;
+    } else {
+      let val=prompt("Edit North Intersection Time", northTime);
+      if(val){
+        northTime=val;
+        northBtn.innerText=val;
+      }
+    }
+  }
 
   if(type==="finish"){
     if(finishTimeValue.innerText==="--:--"){
       pauseTimer();
       finishTimeValue.innerText=format(seconds);
     } else {
-      let val=prompt("Edit Time", finishTimeValue.innerText);
-      if(val) finishTimeValue.innerText=val;
+      let val=prompt("Edit Finish Time", finishTimeValue.innerText);
+      if(val){
+        finishTimeValue.innerText=val;
+      }
     }
-  }
-
-  if(type==="skid" && !skidTime){
-    skidTime=format(seconds);
-    skidBtn.innerText=skidTime;
-  }
-
-  if(type==="north" && !northTime){
-    northTime=format(seconds);
-    northBtn.innerText=northTime;
   }
 
   evaluate();
@@ -139,13 +157,15 @@ coneList.forEach(name=>{
   conesContainer.appendChild(row);
 });
 
-// SUBMIT
+// SUBMIT (FIXED + FULL CLEAR)
 function submitRun(){
 
   const cadet = cadetSelect.value;
 
-  const runType = [...document.querySelectorAll('[name="runType"]')]
-    .find(c => c.checked)?.parentElement.innerText;
+  const runTypeEl = [...document.querySelectorAll('[name="runType"]')]
+    .find(c => c.checked);
+
+  const runType = runTypeEl ? runTypeEl.parentElement.innerText : "";
 
   const finish = finishTimeValue.innerText;
 
@@ -171,15 +191,41 @@ function submitRun(){
   alert("Submitted");
 }
 
-// CLEAR
+// 🔥 FULL RESET (FIXED)
 function clearAll(){
+
+  // Timer
   seconds=0;
   updateDisplay();
+  pauseTimer();
+
+  // Splits
+  skidTime=null;
+  northTime=null;
+
+  skidBtn.innerText="Skid Exit";
+  northBtn.innerText="North Intersection";
   finishTimeValue.innerText="--:--";
-  status.innerText="Status";
-  status.className="";
+
+  // DNF
   dnf=false;
   dnfBtn.classList.remove("active");
+
+  // Checkboxes
+  document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
+
+  // Text inputs
+  document.querySelectorAll("input[type=text]").forEach(t=>t.value="");
+
+  // Comments
+  document.getElementById("comments").value="";
+
+  // Dropdown
+  cadetSelect.selectedIndex=0;
+
+  // Status
+  status.innerText="Status";
+  status.className="";
 }
 
 // ROSTER
