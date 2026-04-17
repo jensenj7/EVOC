@@ -12,6 +12,8 @@
 
 <body>
 
+<div class="app-container">
+
 <div id="pinScreen" class="screen active">
   <h1>EVOC Access</h1>
   <input type="password" id="pinInput">
@@ -46,11 +48,12 @@
       <div onclick="handleSplit('skid')" id="skidBtn">Skid Exit</div>
       <div onclick="handleSplit('north')" id="northBtn">North Intersection</div>
 
-      <!-- 🔥 FIXED -->
       <div onclick="handleSplit('finish')" id="finishBtn">
-        End Time:
-        <span id="finishTimeValue">--:--</span>
+        End Time: <span id="finishTimeValue">--:--</span>
       </div>
+
+      <!-- NEW -->
+      <div onclick="toggleDNF()" id="dnfBtn">DNF</div>
 
     </div>
 
@@ -69,14 +72,14 @@
 
   <div id="conesContainer"></div>
 
-  <div class="comments-box">
-    <textarea id="comments"></textarea>
-  </div>
+  <textarea id="comments"></textarea>
 
   <div class="footer">
     <div id="status">Status</div>
     <button onclick="submitRun()">Submit</button>
   </div>
+
+</div>
 
 </div>
 
