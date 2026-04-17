@@ -1,4 +1,15 @@
-let dnf=false;
+// ✅ RESTORE PIN FUNCTION
+function checkPin(){
+  const pin = document.getElementById("pinInput").value;
+
+  if(pin === "1776"){
+    document.getElementById("pinScreen").classList.remove("active");
+    document.getElementById("appScreen").classList.add("active");
+    loadRoster();
+  } else {
+    alert("Incorrect PIN");
+  }
+}
 
 // TIMER
 let seconds=0, timer=null, running=false;
@@ -14,7 +25,10 @@ function startTimer(){
   }
 }
 
-function pauseTimer(){ clearInterval(timer); running=false; }
+function pauseTimer(){
+  clearInterval(timer);
+  running=false;
+}
 
 function endTimer(){
   pauseTimer();
@@ -57,6 +71,8 @@ function handleSplit(type){
 }
 
 // DNF
+let dnf=false;
+
 function toggleDNF(){
   dnf=!dnf;
   dnfBtn.classList.toggle("active");
@@ -79,6 +95,7 @@ function evaluate(){
 
   if(finish==="--:--"){
     status.innerText="Status";
+    status.className="";
     return;
   }
 
@@ -99,7 +116,7 @@ function format(sec){
   return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
 }
 
-// ✅ CONE LIST RESTORED
+// CONES
 const coneList=[
 "Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry","Skid Pan Turn 1",
 "Skid Pan Turn 2","Skid Pan Turn 3","Exit Skid Pan","Middle Intersection",
@@ -122,10 +139,11 @@ coneList.forEach(name=>{
   conesContainer.appendChild(row);
 });
 
-// SUBMIT (RESTORED)
+// SUBMIT
 function submitRun(){
 
   const cadet = cadetSelect.value;
+
   const runType = [...document.querySelectorAll('[name="runType"]')]
     .find(c => c.checked)?.parentElement.innerText;
 
@@ -159,6 +177,7 @@ function clearAll(){
   updateDisplay();
   finishTimeValue.innerText="--:--";
   status.innerText="Status";
+  status.className="";
   dnf=false;
   dnfBtn.classList.remove("active");
 }
