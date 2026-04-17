@@ -209,7 +209,7 @@ function clearAll(){
   finishTimeValue.innerText="--:--";
 
   dnf=false;
-  dnfBtn.classList.remove("active");
+  dnfBtn.classList.remove("dnf-active");
 
   document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
   document.querySelectorAll("input[type=text]").forEach(t=>t.value="");
