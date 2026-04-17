@@ -1,4 +1,22 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EVOC App</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="EVOC 192.png">
+</head>
+
+<body>
+
+<div class="app-container">
+
+<div id="pinScreen" class="screen active">
+  <h1>EVOC Access</h1>
+  <input type="password" id="pinInput">
   <button onclick="checkPin()">Enter</button>
 </div>
 
@@ -59,17 +77,6 @@
 
 </div>
 
-</div>
-
-<div id="splitModal" class="modal hidden">
-  <div class="modal-box">
-    <h3>Edit Split Time</h3>
-    <input id="splitInput" type="text" placeholder="MM:SS">
-    <div class="modal-buttons">
-      <button onclick="saveSplitEdit()">Save</button>
-      <button onclick="closeSplitModal()">Cancel</button>
-    </div>
-  </div>
 </div>
 
 <script src="app.js"></script>
