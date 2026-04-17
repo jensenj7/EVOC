@@ -5,7 +5,6 @@ body {
   margin:0;
 }
 
-/* 🔥 KEY FIX */
 .app-container {
   max-width:700px;
   margin:auto;
@@ -19,7 +18,17 @@ body {
   justify-content:space-between;
 }
 
-.cadet-block { width:50%; }
+.cadet-block { width:60%; }
+
+.cadet-block select {
+  width:100%;
+  margin-top:5px;
+}
+
+.run-block {
+  display:flex;
+  flex-direction:column;
+}
 
 .button-row {
   display:flex;
@@ -59,25 +68,24 @@ body {
 
 .table-header, .table-row {
   display:grid;
-  grid-template-columns: 2.5fr 0.6fr 0.6fr 0.9fr;
+  grid-template-columns: 2.5fr 0.6fr 0.6fr 1fr;
   gap:5px;
 }
 
 textarea {
   width:100%;
   height:60px;
+  margin-top:10px;
 }
 
 .footer {
   display:flex;
   justify-content:space-between;
   align-items:center;
+  margin-top:10px;
 }
 
 .qual { color:lime; }
 .nonqual { color:red; }
 
-/* DNF highlight */
-#dnfBtn.active {
-  background:red;
-}
+#dnfBtn.active { background:red; }
