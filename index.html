@@ -15,9 +15,14 @@
 <div class="app-container">
 
 <div id="pinScreen" class="screen active">
+
+  <img src="EVOC 192.png" class="pin-logo">
+
   <h1>EVOC Access</h1>
+
   <input type="password" id="pinInput">
   <button onclick="checkPin()">Enter</button>
+
 </div>
 
 <div id="appScreen" class="screen">
@@ -47,9 +52,12 @@
     <div class="left-panel">
       <div onclick="handleSplit('skid')" id="skidBtn">Skid Exit</div>
       <div onclick="handleSplit('north')" id="northBtn">North Intersection</div>
+
       <div onclick="handleSplit('finish')" id="finishBtn">
-        End Time: <span id="finishTimeValue">--:--</span>
+        End Time:
+        <span id="finishTimeValue">--:--</span>
       </div>
+
       <div onclick="toggleDNF()" id="dnfBtn">DNF</div>
     </div>
 
@@ -71,8 +79,11 @@
   <textarea id="comments"></textarea>
 
   <div class="footer">
-    <div id="status">Status</div>
-    <button onclick="submitRun()">Submit</button>
+      <div id="status" class="status-display">
+         Status
+      </div>
+
+      <button onclick="submitRun()">Submit</button>
   </div>
 
 </div>
