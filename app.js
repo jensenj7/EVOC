@@ -1,14 +1,5 @@
 let dnf=false;
 
-// PIN
-function checkPin(){
-  if(pinInput.value==="1776"){
-    pinScreen.classList.remove("active");
-    appScreen.classList.add("active");
-    loadRoster();
-  }
-}
-
 // TIMER
 let seconds=0, timer=null, running=false;
 
@@ -52,18 +43,14 @@ function handleSplit(type){
     }
   }
 
-  if(type==="skid"){
-    if(!skidTime){
-      skidTime=format(seconds);
-      skidBtn.innerText=skidTime;
-    }
+  if(type==="skid" && !skidTime){
+    skidTime=format(seconds);
+    skidBtn.innerText=skidTime;
   }
 
-  if(type==="north"){
-    if(!northTime){
-      northTime=format(seconds);
-      northBtn.innerText=northTime;
-    }
+  if(type==="north" && !northTime){
+    northTime=format(seconds);
+    northBtn.innerText=northTime;
   }
 
   evaluate();
@@ -109,27 +96,33 @@ function evaluate(){
 
 // FORMAT
 function format(sec){
-  let m=Math.floor(sec/60).toString().padStart(2,'0');
-  let s=(sec%60).toString().padStart(2,'0');
-  return `${m}:${s}`;
+  return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
 }
 
-// TABLE
-const coneList=[/* same list */];
+// ✅ CONE LIST RESTORED
+const coneList=[
+"Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry","Skid Pan Turn 1",
+"Skid Pan Turn 2","Skid Pan Turn 3","Exit Skid Pan","Middle Intersection",
+"South Intersection","Slalom","Northeast Straight","Northeast Turn",
+"North Straight","Northwest Turn","North Intersection","360 Turn",
+"West Straight","Southwest Turn","Serpentine","Lane Change"
+];
 
 coneList.forEach(name=>{
   let row=document.createElement("div");
   row.className="table-row";
+
   row.innerHTML=`
     <div>${name}</div>
     <input type="checkbox">
     <input type="checkbox">
     <input type="text">
   `;
+
   conesContainer.appendChild(row);
 });
 
-// SUBMIT (WITH VALIDATION + OFFLINE)
+// SUBMIT (RESTORED)
 function submitRun(){
 
   const cadet = cadetSelect.value;
@@ -150,42 +143,38 @@ function submitRun(){
     status: status.innerText
   };
 
-  if(!navigator.onLine){
-    let stored = JSON.parse(localStorage.getItem("offlineRuns") || "[]");
-    stored.push(payload);
-    localStorage.setItem("offlineRuns", JSON.stringify(stored));
-    alert("Saved offline");
-    clearAll();
-    return;
-  }
-
-  sendToSheets(payload);
-}
-
-// SEND
-function sendToSheets(data){
-  fetch("YOUR_SCRIPT_URL", {
+  fetch("https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec", {
     method:"POST",
     mode:"no-cors",
-    body:JSON.stringify(data)
+    body:JSON.stringify(payload)
   });
 
   clearAll();
+  alert("Submitted");
 }
-
-// AUTO RETRY OFFLINE
-window.addEventListener("online", ()=>{
-  let stored = JSON.parse(localStorage.getItem("offlineRuns") || "[]");
-  stored.forEach(sendToSheets);
-  localStorage.removeItem("offlineRuns");
-});
 
 // CLEAR
 function clearAll(){
   seconds=0;
   updateDisplay();
   finishTimeValue.innerText="--:--";
+  status.innerText="Status";
   dnf=false;
   dnfBtn.classList.remove("active");
-  status.innerText="Status";
+}
+
+// ROSTER
+async function loadRoster(){
+  const url="https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
+  let res=await fetch(url);
+  let data=await res.json();
+
+  cadetSelect.innerHTML="<option>Select Cadet</option>";
+
+  data.forEach(r=>{
+    let name=r.Name || Object.values(r)[0];
+    let opt=document.createElement("option");
+    opt.text=name;
+    cadetSelect.add(opt);
+  });
 }
