@@ -1,32 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EVOC App</title>
-
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="EVOC 192.png">
-</head>
-
-<body>
-
-<div class="app-container">
-
-<div id="pinScreen" class="screen active">
-
-  <img src="EVOC 192.png" class="pin-logo">
-
   <h1>EVOC Access</h1>
-
   <input type="password" id="pinInput">
   <button onclick="checkPin()">Enter</button>
-
 </div>
 
 <div id="appScreen" class="screen">
-
   <div class="top-bar">
     <div class="cadet-block">
       <label>Cadet</label>
@@ -48,48 +26,44 @@
   </div>
 
   <div class="middle-row">
-
     <div class="left-panel">
       <div onclick="handleSplit('skid')" id="skidBtn">Skid Exit</div>
       <div onclick="handleSplit('north')" id="northBtn">North Intersection</div>
-
-      <div onclick="handleSplit('finish')" id="finishBtn">
-        End Time:
-        <span id="finishTimeValue">--:--</span>
-      </div>
-
+      <div onclick="handleSplit('finish')" id="finishBtn">End Time: <span id="finishTimeValue">--:--</span></div>
       <div onclick="toggleDNF()" id="dnfBtn">DNF</div>
     </div>
 
     <div class="timer-box">
       <div id="timerDisplay">00:00</div>
     </div>
-
   </div>
 
   <div class="table-header">
-    <div>Cones Location</div>
-    <div class="center">Inside</div>
-    <div class="center">Outside</div>
-    <div class="center">#/Gate</div>
+    <div>Cones Location</div><div class="center">Inside</div><div class="center">Outside</div><div class="center">#/Gate</div>
   </div>
-
   <div id="conesContainer"></div>
 
   <textarea id="comments"></textarea>
 
   <div class="footer">
-      <div id="status" class="status-display">
-         Status
-      </div>
-
-      <button onclick="submitRun()">Submit</button>
+    <div id="status" class="status-display">Status</div>
+    <button onclick="submitRun()">Submit</button>
   </div>
+</div>
 
+<!-- NEW IN-APP MODAL -->
+<div id="splitModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 id="modalTitle">Edit Split</h3>
+    <input id="modalInput" type="text">
+    <div class="modal-buttons">
+      <button onclick="saveModalEdit()">Save</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
