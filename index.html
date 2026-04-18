@@ -20,8 +20,10 @@
 
   <h1>EVOC Access</h1>
 
-  <input type="password" id="pinInput">
-  <button onclick="checkPin()">Enter</button>
+  <div class="pin-form">
+    <input type="password" id="pinInput">
+    <button onclick="checkPin()">Enter</button>
+  </div>
 
 </div>
 
@@ -34,9 +36,9 @@
     </div>
 
     <div class="run-block">
-      <label><input type="checkbox" name="runType"> Practice Run</label>
-      <label><input type="checkbox" name="runType"> Qualifying Run</label>
-      <label><input type="checkbox" name="runType"> Remedial</label>
+      <label><input type="checkbox" name="runType" onchange="handleRunTypeSelection(this)"> Practice Run</label>
+      <label><input type="checkbox" name="runType" onchange="handleRunTypeSelection(this)"> Qualifying Run</label>
+      <label><input type="checkbox" name="runType" onchange="handleRunTypeSelection(this)"> Remedial</label>
     </div>
   </div>
 
