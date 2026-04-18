@@ -19,11 +19,50 @@ padding:15px;
 display:block;
 }
 
+/* PIN SCREEN LAYOUT */
+#pinScreen.active{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+text-align:center;
+gap:14px;
+box-sizing:border-box;
+}
+
 /* PIN PAGE LOGO */
 .pin-logo{
 display:block;
-width:120px;
-margin:25px auto 10px auto;
+width:170px;
+margin:0 auto;
+}
+
+.pin-form{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:10px;
+width:100%;
+max-width:260px;
+}
+
+#pinScreen h1{
+margin:0;
+}
+
+#pinInput{
+width:100%;
+padding:10px;
+font-size:22px;
+text-align:center;
+box-sizing:border-box;
+}
+
+#pinScreen button{
+width:100%;
+padding:10px 22px;
+font-size:18px;
 }
 
 /* TOP */
