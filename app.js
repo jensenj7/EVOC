@@ -7,6 +7,7 @@ function checkPin(){
   if(pin===APP_PIN){
     pinScreen.classList.remove("active");
     appScreen.classList.add("active");
+    evaluate();
     loadRoster();
   }else{
     alert("Incorrect PIN");
