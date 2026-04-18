@@ -1,8 +1,10 @@
 // PIN
-function checkPin(){
-  const pin = document.getElementById("pinInput").value;
+const APP_PIN = "1776";
 
-  if(pin==="1776"){
+function checkPin(){
+  const pin = document.getElementById("pinInput").value.trim();
+
+  if(pin===APP_PIN){
     pinScreen.classList.remove("active");
     appScreen.classList.add("active");
     loadRoster();
@@ -15,6 +17,16 @@ function checkPin(){
 let seconds=0;
 let timer=null;
 let running=false;
+
+function handleRunTypeSelection(selected){
+ document
+ .querySelectorAll('input[name="runType"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
 
 function startTimer(){
  if(!running){
@@ -173,13 +185,13 @@ function toggleDNF(){
 function evaluate(){
 
  if(dnf){
-   status.innerText="NON-QUALIFYING";
+   status.innerText="Non-Qualifying";
    status.className="status-display nonqual";
    return;
  }
 
  let anyChecked=
- [...document.querySelectorAll("input[type=checkbox]")]
+ [...document.querySelectorAll(".cone-checkbox")]
  .some(c=>c.checked);
 
  let finish;
@@ -193,12 +205,12 @@ function evaluate(){
 
  if(anyChecked || finish>145){
 
-    status.innerText="NON-QUALIFYING";
+    status.innerText="Non-Qualifying";
     status.className="status-display nonqual";
 
  }else{
 
-    status.innerText="QUALIFYING";
+    status.innerText="Qualifying";
     status.className="status-display qual";
  }
 }
@@ -229,8 +241,8 @@ coneList.forEach(name=>{
 
  row.innerHTML=`
  <div>${name}</div>
- <input type="checkbox" onchange="evaluate()">
- <input type="checkbox" onchange="evaluate()">
+ <input type="checkbox" class="cone-checkbox" onchange="evaluate()">
+ <input type="checkbox" class="cone-checkbox" onchange="evaluate()">
  <input type="text">
  `;
 
@@ -243,16 +255,17 @@ function submitRun(){
 
  const cadet=cadetSelect.value;
 
- const runTypeEl=
- [...document.querySelectorAll('[name="runType"]')]
- .find(c=>c.checked);
+ const selectedRunTypes=
+ [...document.querySelectorAll('input[name="runType"]:checked')];
 
  const runType=
- runTypeEl ? runTypeEl.parentElement.innerText : "";
+ selectedRunTypes.length===1
+ ? selectedRunTypes[0].parentElement.innerText
+ : "";
 
  const finish=finishTimeValue.innerText;
 
- if(!cadet || !runType || (finish==="--:--" && !dnf)){
+ if(!cadet || selectedRunTypes.length!==1 || !runType || (finish==="--:--" && !dnf)){
     alert("Missing required fields");
     return;
  }
@@ -312,10 +325,10 @@ function clearAll(){
 
  cadetSelect.selectedIndex=0;
 
- status.innerText="Status";
-
- status.className="status-display";
+ evaluate();
 }
+
+evaluate();
 
 // ROSTER
 async function loadRoster(){
