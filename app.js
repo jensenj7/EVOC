@@ -191,9 +191,13 @@ function evaluate(){
    return;
  }
 
+ const coneChecks=[
+ ...document.querySelectorAll(".cone-checkbox"),
+ ...document.querySelectorAll('#conesContainer input[type="checkbox"]')
+ ];
+
  let anyChecked=
- [...document.querySelectorAll(".cone-checkbox")]
- .some(c=>c.checked);
+ coneChecks.some(c=>c.checked);
 
  let finish;
 
@@ -249,6 +253,12 @@ coneList.forEach(name=>{
 
  conesContainer.appendChild(row);
 
+});
+
+conesContainer.addEventListener("change",function(e){
+ if(e.target.matches('input[type="checkbox"]')){
+   evaluate();
+ }
 });
 
 // SUBMIT
