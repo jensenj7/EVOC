@@ -138,6 +138,10 @@ gap:5px;
 text-align:center;
 }
 
+.table-row input[type="checkbox"]{
+justify-self:center;
+}
+
 textarea{
 width:100%;
 height:60px;
