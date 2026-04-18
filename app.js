@@ -184,10 +184,11 @@ function toggleDNF(){
 
 // STATUS
 function evaluate(){
+ const statusEl=document.getElementById("status");
 
  if(dnf){
-   status.innerText="Non-Qualifying";
-   status.className="status-display nonqual";
+   statusEl.innerText="Non-Qualifying";
+   statusEl.className="status-display nonqual";
    return;
  }
 
@@ -210,13 +211,13 @@ function evaluate(){
 
  if(anyChecked || finish>145){
 
-    status.innerText="Non-Qualifying";
-    status.className="status-display nonqual";
+    statusEl.innerText="Non-Qualifying";
+    statusEl.className="status-display nonqual";
 
  }else{
 
-    status.innerText="Qualifying";
-    status.className="status-display qual";
+    statusEl.innerText="Qualifying";
+    statusEl.className="status-display qual";
  }
 }
 
@@ -285,7 +286,7 @@ function submitRun(){
    cadet,
    runType,
    finish: dnf ? "DNF" : finish,
-   status: status.innerText
+   status: document.getElementById("status").innerText
  };
 
  fetch(
