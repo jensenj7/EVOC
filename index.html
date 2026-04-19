@@ -43,24 +43,24 @@
   </div>
 
   <div class="button-row">
-    <button onclick="startTimer()">Start</button>
-    <button onclick="pauseTimer()">Pause</button>
-    <button onclick="endTimer()">End</button>
-    <button onclick="clearAll()">Clear</button>
+    <button class="timer-btn start-btn" onclick="startTimer()">Start</button>
+    <button id="pauseBtn" class="timer-btn pause-btn" onclick="togglePauseResume()">Pause</button>
+    <button class="timer-btn end-btn" onclick="endTimer()">End</button>
+    <button class="timer-btn clear-btn" onclick="clearAll()">Clear</button>
   </div>
 
   <div class="middle-row">
 
     <div class="left-panel">
-      <div onclick="handleSplit('skid')" id="skidBtn">Skid Exit</div>
-      <div onclick="handleSplit('north')" id="northBtn">North Intersection</div>
+      <div class="split-btn" onclick="handleSplit('skid')" id="skidBtn">Skid Exit</div>
+      <div class="split-btn" onclick="handleSplit('north')" id="northBtn">North Intersection</div>
 
-      <div onclick="handleSplit('finish')" id="finishBtn">
+      <div class="split-btn" onclick="handleSplit('finish')" id="finishBtn">
         End Time:
         <span id="finishTimeValue">--:--</span>
       </div>
 
-      <div onclick="toggleDNF()" id="dnfBtn">DNF</div>
+      <div class="split-btn" onclick="toggleDNF()" id="dnfBtn">DNF</div>
     </div>
 
     <div class="timer-box">
@@ -85,7 +85,7 @@
          Qualifying
       </div>
 
-      <button onclick="submitRun()">Submit</button>
+      <button class="submit-btn" onclick="submitRun()">Submit</button>
   </div>
 
 </div>
