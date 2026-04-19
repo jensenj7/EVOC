@@ -32,6 +32,7 @@ function handleRunTypeSelection(selected){
 function startTimer(){
  if(!running){
    running=true;
+   pauseBtn.innerText="Pause";
 
    timer=setInterval(()=>{
       seconds++;
@@ -46,8 +47,18 @@ function pauseTimer(){
  running=false;
 }
 
+function togglePauseResume(){
+ if(running){
+   pauseTimer();
+   pauseBtn.innerText="Resume";
+ }else{
+   startTimer();
+ }
+}
+
 function endTimer(){
  pauseTimer();
+ pauseBtn.innerText="Resume";
  finishTimeValue.innerText=format(seconds);
  evaluate();
 }
@@ -310,6 +321,7 @@ function clearAll(){
  updateDisplay();
 
  pauseTimer();
+ pauseBtn.innerText="Pause";
 
  skidTime=null;
  northTime=null;
