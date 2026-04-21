@@ -205,6 +205,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 margin-top:10px;
+gap:10px;
 }
 
 .submit-btn{
@@ -221,6 +222,13 @@ border-radius:14px;
 font-size:24px;
 font-weight:bold;
 min-width:220px;
+}
+
+.sync-status{
+font-size:14px;
+color:#b8c4df;
+text-align:center;
+flex:1;
 }
 
 .qual{
@@ -275,5 +283,9 @@ font-size:74px;
 .submit-btn{
 font-size:16px;
 padding:7px 14px;
+}
+
+.sync-status{
+font-size:12px;
 }
 }
