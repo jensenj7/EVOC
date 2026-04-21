@@ -305,8 +305,6 @@ function submitRun(){
  flushQueuedRuns();
 
  clearAll();
-
- alert("Run saved. It will sync automatically.");
 }
 
 // CLEAR
