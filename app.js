@@ -300,17 +300,23 @@ function splitOrBlank(value,defaultLabel){
  return value===defaultLabel ? "" : value;
 }
 
+function cleanText(value){
+ return String(value || "")
+ .replace(/\s+/g," ")
+ .trim();
+}
+
 // SUBMIT
 function submitRun(){
 
- const cadet=cadetSelect.value;
+ const cadet=cleanText(cadetSelect.value);
 
  const selectedRunTypes=
  [...document.querySelectorAll('input[name="runType"]:checked')];
 
  const runType=
  selectedRunTypes.length===1
- ? selectedRunTypes[0].parentElement.innerText
+ ? cleanText(selectedRunTypes[0].parentElement.textContent)
  : "";
 
  const finish=finishTimeValue.innerText;
@@ -321,14 +327,14 @@ function submitRun(){
  }
 
  const payload={
-   cadet,
-   runType,
-   skidExitTime: splitOrBlank(skidBtn.innerText,"Skid Exit"),
-   northIntersectionTime: splitOrBlank(northBtn.innerText,"North Intersection"),
-   finalTime: dnf ? "DNF" : finish,
-   coneHitLocations: buildConeHitSummary(),
-   result: document.getElementById("status").innerText,
-   instructorComments: document.getElementById("comments").value.trim()
+   cadet: cleanText(cadet),
+   runType: cleanText(runType),
+   skidExitTime: cleanText(splitOrBlank(skidBtn.innerText,"Skid Exit")),
+   northIntersectionTime: cleanText(splitOrBlank(northBtn.innerText,"North Intersection")),
+   finalTime: cleanText(dnf ? "DNF" : finish),
+   coneHitLocations: cleanText(buildConeHitSummary()),
+   result: cleanText(document.getElementById("status").innerText),
+   instructorComments: cleanText(document.getElementById("comments").value)
  };
 
  queueRun(payload);
