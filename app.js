@@ -274,6 +274,32 @@ conesContainer.addEventListener("change",function(e){
  }
 });
 
+function buildConeHitSummary(){
+ const hits=[];
+ const rows=[...document.querySelectorAll("#conesContainer .table-row")];
+
+ rows.forEach(row=>{
+   const name=row.querySelector("div").innerText.trim();
+   const inside=row.children[1];
+   const outside=row.children[2];
+   const gate=(row.children[3].value || "").trim();
+
+   if(inside.checked){
+     hits.push(`${name}${gate ? ` ${gate}` : ""} inside`);
+   }
+
+   if(outside.checked){
+     hits.push(`${name}${gate ? ` ${gate}` : ""} outside`);
+   }
+ });
+
+ return hits.join(", ");
+}
+
+function splitOrBlank(value,defaultLabel){
+ return value===defaultLabel ? "" : value;
+}
+
 // SUBMIT
 function submitRun(){
 
@@ -297,8 +323,12 @@ function submitRun(){
  const payload={
    cadet,
    runType,
-   finish: dnf ? "DNF" : finish,
-   status: document.getElementById("status").innerText
+   skidExitTime: splitOrBlank(skidBtn.innerText,"Skid Exit"),
+   northIntersectionTime: splitOrBlank(northBtn.innerText,"North Intersection"),
+   finalTime: dnf ? "DNF" : finish,
+   coneHitLocations: buildConeHitSummary(),
+   result: document.getElementById("status").innerText,
+   instructorComments: document.getElementById("comments").value.trim()
  };
 
  queueRun(payload);
