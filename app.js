@@ -1,5 +1,6 @@
 // PIN
 const APP_PIN = "1776";
+const RUN_QUEUE_KEY = "evocRunQueue";
 
 function checkPin(){
   const pin = document.getElementById("pinInput").value.trim();
@@ -300,17 +301,12 @@ function submitRun(){
    status: document.getElementById("status").innerText
  };
 
- fetch(
- "https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec",
- {
-   method:"POST",
-   mode:"no-cors",
-   body:JSON.stringify(payload)
- });
+ queueRun(payload);
+ flushQueuedRuns();
 
  clearAll();
 
- alert("Submitted");
+ alert("Run saved. It will sync automatically.");
 }
 
 // CLEAR
@@ -354,6 +350,87 @@ function clearAll(){
 
 evaluate();
 
+function getQueuedRuns(){
+ try{
+   return JSON.parse(localStorage.getItem(RUN_QUEUE_KEY) || "[]");
+ }catch{
+   return [];
+ }
+}
+
+function setQueuedRuns(queue){
+ localStorage.setItem(RUN_QUEUE_KEY,JSON.stringify(queue));
+ updateSyncStatus();
+}
+
+function updateSyncStatus(){
+ const syncStatus=document.getElementById("syncStatus");
+ if(!syncStatus) return;
+
+ const queued=getQueuedRuns().length;
+
+ if(queued===0){
+   syncStatus.innerText="All runs synced";
+   return;
+ }
+
+ if(navigator.onLine){
+   syncStatus.innerText=`${queued} run(s) pending sync`;
+ }else{
+   syncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
+ }
+}
+
+function queueRun(payload){
+ const queue=getQueuedRuns();
+ queue.push({
+   payload,
+   queuedAt:new Date().toISOString()
+ });
+ setQueuedRuns(queue);
+}
+
+async function postRun(payload){
+ return fetch(
+ "https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec",
+ {
+   method:"POST",
+   mode:"no-cors",
+   body:JSON.stringify(payload)
+ });
+}
+
+let syncing=false;
+
+async function flushQueuedRuns(){
+ if(syncing) return;
+ if(!navigator.onLine){
+   updateSyncStatus();
+   return;
+ }
+
+ syncing=true;
+
+ try{
+   let queue=getQueuedRuns();
+
+   while(queue.length){
+     const run=queue[0];
+
+     try{
+       await postRun(run.payload);
+       queue.shift();
+       setQueuedRuns(queue);
+     }catch{
+       break;
+     }
+   }
+ }finally{
+   syncing=false;
+   updateSyncStatus();
+ }
+}
+
 // ROSTER
 async function loadRoster(){
 
@@ -382,3 +459,8 @@ async function loadRoster(){
  });
 
 }
+
+window.addEventListener("online",flushQueuedRuns);
+window.addEventListener("offline",updateSyncStatus);
+setInterval(flushQueuedRuns,15000);
+updateSyncStatus();
