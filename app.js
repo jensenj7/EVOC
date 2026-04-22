@@ -413,6 +413,7 @@ function submitRun(){
  }
 
  const payload={
+   sheet:"Road Course",
    cadet: cleanText(cadet),
    runType: cleanText(runType),
    skidExitTime: cleanText(splitOrBlank(skidBtn.innerText,"Skid Exit")),
@@ -457,7 +458,7 @@ function submitAARun(){
    speedOut,
    conesHit,
    instructorObservations,
-   results:result
+   result
  };
 
  queueRun(payload);
