@@ -34,6 +34,7 @@
     <select id="pageSelect" onchange="switchPage(this.value)">
       <option value="road-course">Road Course</option>
       <option value="aa">AA</option>
+      <option value="backing">Backing</option>
     </select>
   </div>
 
@@ -171,6 +172,74 @@
         <li>Understand the importance of vehicle placement as it relates to corner entry.</li>
         <li>Understand the changes in vehicle dynamics as speeds are increased.</li>
         <li>Learn that you can steer around an obstacle quicker than you can stop the vehicle.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="backingPage" class="course-page">
+    <h2 class="aa-title">Backing</h2>
+
+    <div class="top-bar">
+      <div class="cadet-block">
+        <label>Cadet</label>
+        <select id="backingCadetSelect"></select>
+      </div>
+    </div>
+
+    <div class="backing-timer-row">
+      <div class="backing-button-column">
+        <button class="timer-btn start-btn" onclick="startBackingTimer()">Start</button>
+        <button class="timer-btn pause-btn" id="backingPauseBtn" onclick="toggleBackingPauseResume()">Pause</button>
+        <button class="timer-btn end-btn" onclick="endBackingTimer()">End</button>
+      </div>
+
+      <div class="timer-box backing-timer-box">
+        <div id="backingTimerDisplay">00:00</div>
+      </div>
+    </div>
+
+    <div class="aa-subheading">Observation Method</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="backingObservationMethod" onchange="handleBackingObservationSelection(this)"> Look back</label>
+      <label><input type="checkbox" name="backingObservationMethod" onchange="handleBackingObservationSelection(this)"> Mirrors</label>
+      <label><input type="checkbox" name="backingObservationMethod" onchange="handleBackingObservationSelection(this)"> Both</label>
+    </div>
+
+    <div class="aa-subheading">Cones Hit</div>
+    <div class="results-block backing-cones-block">
+      <label><input type="checkbox" class="backing-cone-checkbox" value="Slalom"> Slalom</label>
+      <label><input type="checkbox" class="backing-cone-checkbox" value="Garage #1"> Garage #1</label>
+      <label><input type="checkbox" class="backing-cone-checkbox" value="Garage #2"> Garage #2</label>
+      <label><input type="checkbox" class="backing-cone-checkbox" value="Garage #3 (Final Garage)"> Garage #3 (Final Garage)</label>
+    </div>
+
+    <div class="aa-subheading">Results</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="backingResult" onchange="handleBackingResultSelection(this)"> Qualification</label>
+      <label><input type="checkbox" name="backingResult" onchange="handleBackingResultSelection(this)"> Non-Qualification</label>
+      <label><input type="checkbox" name="backingResult" onchange="handleBackingResultSelection(this)"> Remedial</label>
+    </div>
+
+    <div class="comments-label">Instructor Comments</div>
+    <textarea id="backingComments" placeholder="optional"></textarea>
+
+    <div class="footer">
+      <div class="sync-status" id="backingSyncStatus">All runs synced</div>
+      <button class="submit-btn" onclick="submitBackingRun()">Submit</button>
+    </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs.</p>
+      <p>Students will chose between look back and mirror methods before placing the vehicle in reverse and complete the course with hitting any cones with 39 seconds.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Learn to control a vehicle while traveling backwards.</li>
+        <li>Understand vehicle dynamics (caster effect) in backing up.</li>
+        <li>Understand limitations of view while backing.</li>
+        <li>Understand why backing is one of the three maneuvers that police officers are more likely to become involved in a crash.</li>
+        <li>Understand that slower speeds are better when in reverse.</li>
       </ul>
     </div>
   </div>
