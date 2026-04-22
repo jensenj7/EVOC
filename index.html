@@ -29,6 +29,15 @@
 
 <div id="appScreen" class="screen">
 
+  <div class="page-menu">
+    <label for="pageSelect">Course</label>
+    <select id="pageSelect" onchange="switchPage(this.value)">
+      <option value="road-course">Road Course</option>
+      <option value="aa">AA</option>
+    </select>
+  </div>
+
+  <div id="roadCoursePage" class="course-page active-page">
   <div class="top-bar">
     <div class="cadet-block">
       <label>Cadet</label>
@@ -89,6 +98,66 @@
       <div id="syncStatus" class="sync-status">All runs synced</div>
 
       <button class="submit-btn" onclick="submitRun()">Submit</button>
+  </div>
+
+  </div>
+
+  <div id="aaPage" class="course-page">
+    <h2 class="aa-title">Accident Avoidance</h2>
+
+    <div class="top-bar">
+      <div class="cadet-block">
+        <label>Cadet</label>
+        <select id="aaCadetSelect"></select>
+      </div>
+    </div>
+
+    <div class="aa-grid">
+      <div class="aa-field">
+        <label for="speedIn">Speed In</label>
+        <input type="number" id="speedIn" inputmode="numeric" min="0" placeholder="mph">
+      </div>
+
+      <div class="aa-field">
+        <label for="directionSelect">Direction</label>
+        <select id="directionSelect">
+          <option value="">Select Direction</option>
+          <option value="Left">Left</option>
+          <option value="Right">Right</option>
+        </select>
+      </div>
+
+      <div class="aa-field">
+        <label for="speedOut">Speed Out</label>
+        <input type="number" id="speedOut" inputmode="numeric" min="0" placeholder="mph">
+      </div>
+    </div>
+
+    <div class="aa-subheading">Cones Hit</div>
+
+    <div class="table-header aa-table-header">
+      <div>Location</div>
+      <div class="center">Inside</div>
+      <div class="center">Outside</div>
+    </div>
+
+    <div id="aaConesContainer"></div>
+
+    <div class="aa-subheading">Instructor Observations</div>
+
+    <div id="observationsGrid" class="observations-grid"></div>
+
+    <div class="aa-subheading">Results</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="aaResult" onchange="handleAAResultSelection(this)"> Qualifying Run</label>
+      <label><input type="checkbox" name="aaResult" onchange="handleAAResultSelection(this)"> Non-Qualifying Run</label>
+      <label><input type="checkbox" name="aaResult" onchange="handleAAResultSelection(this)"> Remedial Run</label>
+    </div>
+
+    <div class="footer">
+      <div class="sync-status" id="aaSyncStatus">All runs synced</div>
+      <button class="submit-btn" onclick="submitAARun()">Submit</button>
+    </div>
   </div>
 
 </div>
