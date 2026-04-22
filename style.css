@@ -351,6 +351,41 @@ gap:10px 20px;
 margin-top:6px;
 }
 
+.backing-timer-row{
+display:flex;
+gap:12px;
+align-items:stretch;
+margin-top:8px;
+margin-bottom:6px;
+}
+
+.backing-button-column{
+display:flex;
+flex-direction:column;
+gap:8px;
+width:180px;
+}
+
+.backing-button-column .timer-btn{
+width:100%;
+}
+
+.backing-timer-box{
+flex:1;
+min-height:170px;
+}
+
+#backingTimerDisplay{
+font-size:88px;
+font-weight:500;
+letter-spacing:2px;
+color:#f4f7ff;
+}
+
+.backing-cones-block{
+max-width:620px;
+}
+
 .aa-info{
 margin-top:14px;
 padding:12px 14px;
@@ -475,6 +510,18 @@ font-size:24px;
 
 .aa-grid{
 grid-template-columns:1fr;
+}
+
+.backing-timer-row{
+flex-direction:column;
+}
+
+.backing-button-column{
+width:100%;
+}
+
+#backingTimerDisplay{
+font-size:64px;
 }
 
 .aa-table-header,.aa-table-row{
