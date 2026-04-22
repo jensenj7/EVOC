@@ -1,6 +1,21 @@
 // PIN
 const APP_PIN = "1776";
 const RUN_QUEUE_KEY = "evocRunQueue";
+const ROAD_COURSE_PAGE = "road-course";
+const AA_PAGE = "aa";
+
+function switchPage(page){
+  const roadCoursePage=document.getElementById("roadCoursePage");
+  const aaPage=document.getElementById("aaPage");
+
+  if(page===AA_PAGE){
+    roadCoursePage.classList.remove("active-page");
+    aaPage.classList.add("active-page");
+  }else{
+    aaPage.classList.remove("active-page");
+    roadCoursePage.classList.add("active-page");
+  }
+}
 
 function checkPin(){
   const pin = document.getElementById("pinInput").value.trim();
@@ -23,6 +38,16 @@ let running=false;
 function handleRunTypeSelection(selected){
  document
  .querySelectorAll('input[name="runType"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleAAResultSelection(selected){
+ document
+ .querySelectorAll('input[name="aaResult"]')
  .forEach(option=>{
    if(option!==selected){
      option.checked=false;
@@ -251,6 +276,21 @@ const coneList=[
 "Serpentine","Lane Change"
 ];
 
+const aaConeLocations=[
+"Entry","Lane Change","Exit"
+];
+
+const aaObservationOptions=[
+"Entry speed too slow",
+"Did not maintain speed throughout course",
+"Exit speed too slow",
+"Applied brakes",
+"Did not shuffle steer",
+"Did not get to the outside",
+"Went the wrong direction",
+"Missed exit gate"
+];
+
 coneList.forEach(name=>{
 
  let row=document.createElement("div");
@@ -266,6 +306,30 @@ coneList.forEach(name=>{
 
  conesContainer.appendChild(row);
 
+});
+
+aaConeLocations.forEach(name=>{
+ let row=document.createElement("div");
+ row.className="aa-table-row";
+
+ row.innerHTML=`
+ <div>${name}</div>
+ <input type="checkbox" class="aa-cone-checkbox" data-location="${name}" data-side="inside">
+ <input type="checkbox" class="aa-cone-checkbox" data-location="${name}" data-side="outside">
+ `;
+
+ aaConesContainer.appendChild(row);
+});
+
+aaObservationOptions.forEach(text=>{
+ const option=document.createElement("label");
+
+ option.innerHTML=`
+ <input type="checkbox" class="aa-observation-checkbox" value="${text}">
+ ${text}
+ `;
+
+ observationsGrid.appendChild(option);
 });
 
 conesContainer.addEventListener("change",function(e){
@@ -306,6 +370,28 @@ function cleanText(value){
  .trim();
 }
 
+function buildAAConeHitSummary(){
+ const hits=[];
+
+ document.querySelectorAll(".aa-cone-checkbox").forEach(input=>{
+   if(!input.checked) return;
+   const location=input.dataset.location || "";
+   const side=input.dataset.side || "";
+   hits.push(`${location} ${side}`);
+ });
+
+ return hits.join(", ");
+}
+
+function buildAAObservationsSummary(){
+ const selections=
+ [...document.querySelectorAll(".aa-observation-checkbox:checked")]
+ .map(input=>input.value.trim())
+ .filter(Boolean);
+
+ return selections.join(", ");
+}
+
 // SUBMIT
 function submitRun(){
 
@@ -343,6 +429,42 @@ function submitRun(){
  clearAll();
 }
 
+function submitAARun(){
+ const cadet=cleanText(document.getElementById("aaCadetSelect").value);
+ const speedIn=cleanText(document.getElementById("speedIn").value);
+ const direction=cleanText(document.getElementById("directionSelect").value);
+ const speedOut=cleanText(document.getElementById("speedOut").value);
+ const conesHit=cleanText(buildAAConeHitSummary());
+ const instructorObservations=cleanText(buildAAObservationsSummary());
+ const selectedResults=
+ [...document.querySelectorAll('input[name="aaResult"]:checked')];
+ const result=
+ selectedResults.length===1
+ ? cleanText(selectedResults[0].parentElement.textContent)
+ : "";
+
+ if(!cadet || !speedIn || !direction || !speedOut || !result){
+   alert("Missing required AA fields");
+   return;
+ }
+
+ const payload={
+   sheet:"AA",
+   timestamp:new Date().toISOString(),
+   cadet,
+   speedIn,
+   direction,
+   speedOut,
+   conesHit,
+   instructorObservations,
+   results:result
+ };
+
+ queueRun(payload);
+ flushQueuedRuns();
+ clearAAForm();
+}
+
 // CLEAR
 function clearAll(){
 
@@ -366,11 +488,11 @@ function clearAll(){
  dnfBtn.classList.remove("dnf-active");
 
  document.querySelectorAll(
- "input[type=checkbox]"
+ '#roadCoursePage input[type=checkbox]'
  ).forEach(c=>c.checked=false);
 
  document.querySelectorAll(
- "input[type=text]"
+ '#roadCoursePage input[type=text]'
  ).forEach(t=>t.value="");
 
  document.getElementById(
@@ -379,7 +501,18 @@ function clearAll(){
 
  cadetSelect.selectedIndex=0;
 
- evaluate();
+evaluate();
+}
+
+function clearAAForm(){
+ document.getElementById("aaCadetSelect").selectedIndex=0;
+ document.getElementById("speedIn").value="";
+ document.getElementById("directionSelect").selectedIndex=0;
+ document.getElementById("speedOut").value="";
+
+ document.querySelectorAll(".aa-cone-checkbox").forEach(c=>c.checked=false);
+ document.querySelectorAll(".aa-observation-checkbox").forEach(c=>c.checked=false);
+ document.querySelectorAll('input[name="aaResult"]').forEach(c=>c.checked=false);
 }
 
 evaluate();
@@ -399,19 +532,23 @@ function setQueuedRuns(queue){
 
 function updateSyncStatus(){
  const syncStatus=document.getElementById("syncStatus");
+ const aaSyncStatus=document.getElementById("aaSyncStatus");
  if(!syncStatus) return;
 
  const queued=getQueuedRuns().length;
 
  if(queued===0){
    syncStatus.innerText="All runs synced";
+   if(aaSyncStatus) aaSyncStatus.innerText="All runs synced";
    return;
  }
 
  if(navigator.onLine){
    syncStatus.innerText=`${queued} run(s) pending sync`;
+   if(aaSyncStatus) aaSyncStatus.innerText=`${queued} run(s) pending sync`;
  }else{
    syncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
+   if(aaSyncStatus) aaSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
  }
 }
 
@@ -477,6 +614,8 @@ async function loadRoster(){
 
  cadetSelect.innerHTML=
  "<option>Select Cadet</option>";
+ aaCadetSelect.innerHTML=
+ "<option>Select Cadet</option>";
 
  data.forEach(r=>{
 
@@ -489,6 +628,7 @@ async function loadRoster(){
    opt.text=name;
 
    cadetSelect.add(opt);
+   aaCadetSelect.add(opt.cloneNode(true));
 
  });
 
