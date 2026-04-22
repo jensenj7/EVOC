@@ -19,6 +19,30 @@ padding:15px;
 display:block;
 }
 
+.course-page{
+display:none;
+}
+
+.active-page{
+display:block;
+}
+
+.page-menu{
+display:flex;
+align-items:flex-end;
+gap:10px;
+margin-bottom:12px;
+}
+
+.page-menu select{
+background:linear-gradient(180deg,#0f1b36 0%,#0c1429 100%);
+border:1px solid rgba(124,145,191,.35);
+border-radius:12px;
+color:#eef3ff;
+padding:8px 12px;
+font-size:16px;
+}
+
 /* PIN SCREEN LAYOUT */
 #pinScreen.active{
 display:flex;
@@ -238,6 +262,86 @@ font-weight:600;
 color:#c8d5f7;
 }
 
+.aa-title{
+margin:0 0 12px;
+font-size:30px;
+font-weight:700;
+color:#e7efff;
+}
+
+.aa-grid{
+display:grid;
+grid-template-columns:repeat(3,minmax(140px,1fr));
+gap:10px;
+margin-bottom:10px;
+}
+
+.aa-field{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.aa-field input,.aa-field select{
+background:linear-gradient(180deg,#0f1b36 0%,#0c1429 100%);
+border:1px solid rgba(124,145,191,.35);
+border-radius:12px;
+color:#eef3ff;
+padding:10px 12px;
+font-size:16px;
+box-sizing:border-box;
+}
+
+.aa-subheading{
+margin-top:12px;
+margin-bottom:4px;
+font-size:18px;
+font-weight:600;
+color:#d8e4ff;
+}
+
+.aa-table-header{
+grid-template-columns:minmax(180px,235px) 80px 80px;
+}
+
+.aa-table-row{
+display:grid;
+grid-template-columns:minmax(180px,235px) 80px 80px;
+gap:6px;
+align-items:center;
+font-size:18px;
+line-height:1.2;
+}
+
+.aa-table-row > div:first-child{
+color:#f2f6ff;
+}
+
+.aa-table-row input[type="checkbox"]{
+justify-self:center;
+}
+
+.observations-grid{
+display:grid;
+grid-template-columns:repeat(2,minmax(220px,1fr));
+gap:8px 14px;
+margin-top:6px;
+}
+
+.observations-grid label,.results-block label{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:16px;
+}
+
+.results-block{
+display:flex;
+flex-wrap:wrap;
+gap:10px 20px;
+margin-top:6px;
+}
+
 /* FOOTER */
 .footer{
 display:flex;
@@ -328,6 +432,27 @@ padding:7px 14px;
 font-size:12px;
 }
 
+.aa-title{
+font-size:24px;
+}
+
+.aa-grid{
+grid-template-columns:1fr;
+}
+
+.aa-table-header,.aa-table-row{
+grid-template-columns:minmax(130px,1fr) 56px 56px;
+}
+
+.aa-table-row{
+font-size:16px;
+}
+
+.observations-grid{
+grid-template-columns:1fr;
+gap:8px;
+}
+
 textarea{
 height:86px;
 }
@@ -335,6 +460,11 @@ height:86px;
 
 @media (min-width: 769px){
 .cadet-block select{
+background:#f8fbff;
+color:#101828;
+}
+
+.page-menu select,.aa-field select{
 background:#f8fbff;
 color:#101828;
 }
