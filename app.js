@@ -3,16 +3,24 @@ const APP_PIN = "1776";
 const RUN_QUEUE_KEY = "evocRunQueue";
 const ROAD_COURSE_PAGE = "road-course";
 const AA_PAGE = "aa";
+const BACKING_PAGE = "backing";
 
 function switchPage(page){
   const roadCoursePage=document.getElementById("roadCoursePage");
   const aaPage=document.getElementById("aaPage");
+  const backingPage=document.getElementById("backingPage");
 
   if(page===AA_PAGE){
     roadCoursePage.classList.remove("active-page");
+    backingPage.classList.remove("active-page");
     aaPage.classList.add("active-page");
+  }else if(page===BACKING_PAGE){
+    roadCoursePage.classList.remove("active-page");
+    aaPage.classList.remove("active-page");
+    backingPage.classList.add("active-page");
   }else{
     aaPage.classList.remove("active-page");
+    backingPage.classList.remove("active-page");
     roadCoursePage.classList.add("active-page");
   }
 }
@@ -34,6 +42,9 @@ function checkPin(){
 let seconds=0;
 let timer=null;
 let running=false;
+let backingSeconds=0;
+let backingTimer=null;
+let backingRunning=false;
 
 function handleRunTypeSelection(selected){
  document
@@ -48,6 +59,26 @@ function handleRunTypeSelection(selected){
 function handleAAResultSelection(selected){
  document
  .querySelectorAll('input[name="aaResult"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleBackingObservationSelection(selected){
+ document
+ .querySelectorAll('input[name="backingObservationMethod"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleBackingResultSelection(selected){
+ document
+ .querySelectorAll('input[name="backingResult"]')
  .forEach(option=>{
    if(option!==selected){
      option.checked=false;
@@ -94,6 +125,44 @@ function updateDisplay(){
  let s=String(seconds%60).padStart(2,'0');
 
  timerDisplay.innerText=`${m}:${s}`;
+}
+
+function updateBackingDisplay(){
+ let m=String(Math.floor(backingSeconds/60)).padStart(2,'0');
+ let s=String(backingSeconds%60).padStart(2,'0');
+ backingTimerDisplay.innerText=`${m}:${s}`;
+}
+
+function startBackingTimer(){
+ if(!backingRunning){
+   backingRunning=true;
+   backingPauseBtn.innerText="Pause";
+
+   backingTimer=setInterval(()=>{
+     backingSeconds++;
+     updateBackingDisplay();
+   },1000);
+ }
+}
+
+function pauseBackingTimer(){
+ clearInterval(backingTimer);
+ backingRunning=false;
+}
+
+function toggleBackingPauseResume(){
+ if(backingRunning){
+   pauseBackingTimer();
+   backingPauseBtn.innerText="Resume";
+ }else{
+   startBackingTimer();
+ }
+}
+
+function endBackingTimer(){
+ pauseBackingTimer();
+ backingPauseBtn.innerText="Resume";
+ updateBackingDisplay();
 }
 
 // SPLITS
@@ -392,6 +461,15 @@ function buildAAObservationsSummary(){
  return selections.join(", ");
 }
 
+function buildBackingConeHitSummary(){
+ const hits=
+ [...document.querySelectorAll(".backing-cone-checkbox:checked")]
+ .map(input=>input.value.trim())
+ .filter(Boolean);
+
+ return hits.join(", ");
+}
+
 // SUBMIT
 function submitRun(){
 
@@ -466,6 +544,45 @@ function submitAARun(){
  clearAAForm();
 }
 
+function submitBackingRun(){
+ const cadet=cleanText(document.getElementById("backingCadetSelect").value);
+ const observationSelections=
+ [...document.querySelectorAll('input[name="backingObservationMethod"]:checked')];
+ const observationMethod=
+ observationSelections.length===1
+ ? cleanText(observationSelections[0].parentElement.textContent)
+ : "";
+ const conesHit=cleanText(buildBackingConeHitSummary());
+ const selectedResults=
+ [...document.querySelectorAll('input[name="backingResult"]:checked')];
+ const result=
+ selectedResults.length===1
+ ? cleanText(selectedResults[0].parentElement.textContent)
+ : "";
+ const comments=cleanText(document.getElementById("backingComments").value);
+ const finalTime=cleanText(format(backingSeconds));
+
+ if(!cadet || !observationMethod || !result){
+   alert("Missing required Backing fields");
+   return;
+ }
+
+ const payload={
+   sheet:"Backing",
+   timestamp:new Date().toISOString(),
+   cadet,
+   finalTime,
+   observationMethod,
+   conesHit,
+   instructorComments:comments,
+   result
+ };
+
+ queueRun(payload);
+ flushQueuedRuns();
+ clearBackingForm();
+}
+
 // CLEAR
 function clearAll(){
 
@@ -516,7 +633,21 @@ function clearAAForm(){
  document.querySelectorAll('input[name="aaResult"]').forEach(c=>c.checked=false);
 }
 
+function clearBackingForm(){
+ document.getElementById("backingCadetSelect").selectedIndex=0;
+ document.querySelectorAll('input[name="backingObservationMethod"]').forEach(c=>c.checked=false);
+ document.querySelectorAll('input[name="backingResult"]').forEach(c=>c.checked=false);
+ document.querySelectorAll(".backing-cone-checkbox").forEach(c=>c.checked=false);
+ document.getElementById("backingComments").value="";
+
+ backingSeconds=0;
+ pauseBackingTimer();
+ backingPauseBtn.innerText="Pause";
+ updateBackingDisplay();
+}
+
 evaluate();
+updateBackingDisplay();
 
 function getQueuedRuns(){
  try{
@@ -534,6 +665,7 @@ function setQueuedRuns(queue){
 function updateSyncStatus(){
  const syncStatus=document.getElementById("syncStatus");
  const aaSyncStatus=document.getElementById("aaSyncStatus");
+ const backingSyncStatus=document.getElementById("backingSyncStatus");
  if(!syncStatus) return;
 
  const queued=getQueuedRuns().length;
@@ -541,15 +673,18 @@ function updateSyncStatus(){
  if(queued===0){
    syncStatus.innerText="All runs synced";
    if(aaSyncStatus) aaSyncStatus.innerText="All runs synced";
+   if(backingSyncStatus) backingSyncStatus.innerText="All runs synced";
    return;
  }
 
  if(navigator.onLine){
    syncStatus.innerText=`${queued} run(s) pending sync`;
    if(aaSyncStatus) aaSyncStatus.innerText=`${queued} run(s) pending sync`;
+   if(backingSyncStatus) backingSyncStatus.innerText=`${queued} run(s) pending sync`;
  }else{
    syncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(aaSyncStatus) aaSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
+   if(backingSyncStatus) backingSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
  }
 }
 
@@ -617,6 +752,8 @@ async function loadRoster(){
  "<option>Select Cadet</option>";
  aaCadetSelect.innerHTML=
  "<option>Select Cadet</option>";
+ backingCadetSelect.innerHTML=
+ "<option>Select Cadet</option>";
 
  data.forEach(r=>{
 
@@ -630,6 +767,7 @@ async function loadRoster(){
 
    cadetSelect.add(opt);
    aaCadetSelect.add(opt.cloneNode(true));
+   backingCadetSelect.add(opt.cloneNode(true));
 
  });
 
