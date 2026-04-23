@@ -6,6 +6,7 @@ const AA_PAGE = "aa";
 const BACKING_PAGE = "backing";
 const BRAKE_TURN_PAGE = "brake-turn";
 const LOLLIPOP_PAGE = "lollipop";
+const SLALOM_PAGE = "slalom";
 
 function switchPage(page){
   const pages={
@@ -13,7 +14,8 @@ function switchPage(page){
     [AA_PAGE]:document.getElementById("aaPage"),
     [BACKING_PAGE]:document.getElementById("backingPage"),
     [BRAKE_TURN_PAGE]:document.getElementById("brakeTurnPage"),
-    [LOLLIPOP_PAGE]:document.getElementById("lollipopPage")
+    [LOLLIPOP_PAGE]:document.getElementById("lollipopPage"),
+    [SLALOM_PAGE]:document.getElementById("slalomPage")
   };
 
   Object.values(pages).forEach(el=>{
@@ -131,6 +133,16 @@ function handleLollipopDirectionSelection(selected){
 function handleLollipopResultSelection(selected){
  document
  .querySelectorAll('input[name="lollipopResult"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleSlalomResultSelection(selected){
+ document
+ .querySelectorAll('input[name="slalomResult"]')
  .forEach(option=>{
    if(option!==selected){
      option.checked=false;
@@ -638,6 +650,15 @@ function buildLollipopObservationSummary(){
  return selections.join(", ");
 }
 
+function buildSlalomObservationSummary(){
+ const selections=
+ [...document.querySelectorAll(".slalom-observation-checkbox:checked")]
+ .map(input=>input.value.trim())
+ .filter(Boolean);
+
+ return selections.join(", ");
+}
+
 // SUBMIT
 function submitRun(){
 
@@ -836,6 +857,40 @@ function submitLollipopRun(){
  clearLollipopForm();
 }
 
+function submitSlalomRun(){
+ const cadet=cleanText(document.getElementById("slalomCadetSelect").value);
+ const speedIn=cleanText(document.getElementById("slalomSpeedIn").value);
+ const speedOut=cleanText(document.getElementById("slalomSpeedOut").value);
+ const instructorObservations=cleanText(buildSlalomObservationSummary());
+ const totalConesHit=cleanText(document.getElementById("slalomTotalConesHit").value);
+ const resultSelections=
+ [...document.querySelectorAll('input[name="slalomResult"]:checked')];
+ const result=
+ resultSelections.length===1
+ ? cleanText(resultSelections[0].parentElement.textContent)
+ : "";
+
+ if(!cadet || !speedIn || !speedOut || !result){
+   alert("Missing required Slalom fields");
+   return;
+ }
+
+ const payload={
+   sheet:"Slalom",
+   timestamp:new Date().toISOString(),
+   cadet,
+   speedIn,
+   speedOut,
+   instructorObservations,
+   totalConesHit,
+   result
+ };
+
+ queueRun(payload);
+ flushQueuedRuns();
+ clearSlalomForm();
+}
+
 // CLEAR
 function clearAll(){
 
@@ -935,6 +990,21 @@ function clearLollipopForm(){
  updateLollipopDisplay();
 }
 
+function clearSlalomForm(){
+ const slalomCadetSelect=document.getElementById("slalomCadetSelect");
+ const slalomSpeedIn=document.getElementById("slalomSpeedIn");
+ const slalomSpeedOut=document.getElementById("slalomSpeedOut");
+ const slalomTotalConesHit=document.getElementById("slalomTotalConesHit");
+
+ if(slalomCadetSelect) slalomCadetSelect.selectedIndex=0;
+ if(slalomSpeedIn) slalomSpeedIn.value="";
+ if(slalomSpeedOut) slalomSpeedOut.value="";
+ if(slalomTotalConesHit) slalomTotalConesHit.value="";
+
+ document.querySelectorAll(".slalom-observation-checkbox").forEach(c=>c.checked=false);
+ document.querySelectorAll('input[name="slalomResult"]').forEach(c=>c.checked=false);
+}
+
 evaluate();
 updateBackingDisplay();
 updateLollipopDisplay();
@@ -958,6 +1028,7 @@ function updateSyncStatus(){
  const backingSyncStatus=document.getElementById("backingSyncStatus");
  const brakeTurnSyncStatus=document.getElementById("brakeTurnSyncStatus");
  const lollipopSyncStatus=document.getElementById("lollipopSyncStatus");
+ const slalomSyncStatus=document.getElementById("slalomSyncStatus");
  if(!syncStatus) return;
 
  const queued=getQueuedRuns().length;
@@ -968,6 +1039,7 @@ function updateSyncStatus(){
    if(backingSyncStatus) backingSyncStatus.innerText="All runs synced";
    if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText="All runs synced";
    if(lollipopSyncStatus) lollipopSyncStatus.innerText="All runs synced";
+   if(slalomSyncStatus) slalomSyncStatus.innerText="All runs synced";
    return;
  }
 
@@ -977,12 +1049,14 @@ function updateSyncStatus(){
    if(backingSyncStatus) backingSyncStatus.innerText=`${queued} run(s) pending sync`;
    if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText=`${queued} run(s) pending sync`;
    if(lollipopSyncStatus) lollipopSyncStatus.innerText=`${queued} run(s) pending sync`;
+   if(slalomSyncStatus) slalomSyncStatus.innerText=`${queued} run(s) pending sync`;
  }else{
    syncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(aaSyncStatus) aaSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(backingSyncStatus) backingSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(lollipopSyncStatus) lollipopSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
+   if(slalomSyncStatus) slalomSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
  }
 }
 
@@ -1051,8 +1125,9 @@ async function loadRoster(){
  const backingCadetSelectEl=document.getElementById("backingCadetSelect");
  const brakeTurnCadetSelectEl=document.getElementById("brakeTurnCadetSelect");
  const lollipopCadetSelectEl=document.getElementById("lollipopCadetSelect");
+ const slalomCadetSelectEl=document.getElementById("slalomCadetSelect");
 
- [cadetSelectEl,aaCadetSelectEl,backingCadetSelectEl,brakeTurnCadetSelectEl,lollipopCadetSelectEl]
+ [cadetSelectEl,aaCadetSelectEl,backingCadetSelectEl,brakeTurnCadetSelectEl,lollipopCadetSelectEl,slalomCadetSelectEl]
  .forEach(select=>{
    if(select) select.innerHTML="<option>Select Cadet</option>";
  });
@@ -1072,6 +1147,7 @@ async function loadRoster(){
    if(backingCadetSelectEl) backingCadetSelectEl.add(opt.cloneNode(true));
    if(brakeTurnCadetSelectEl) brakeTurnCadetSelectEl.add(opt.cloneNode(true));
    if(lollipopCadetSelectEl) lollipopCadetSelectEl.add(opt.cloneNode(true));
+   if(slalomCadetSelectEl) slalomCadetSelectEl.add(opt.cloneNode(true));
 
  });
 
