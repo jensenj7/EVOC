@@ -7,32 +7,19 @@ const BACKING_PAGE = "backing";
 const BRAKE_TURN_PAGE = "brake-turn";
 
 function switchPage(page){
-  const roadCoursePage=document.getElementById("roadCoursePage");
-  const aaPage=document.getElementById("aaPage");
-  const backingPage=document.getElementById("backingPage");
-  const brakeTurnPage=document.getElementById("brakeTurnPage");
+  const pages={
+    [ROAD_COURSE_PAGE]:document.getElementById("roadCoursePage"),
+    [AA_PAGE]:document.getElementById("aaPage"),
+    [BACKING_PAGE]:document.getElementById("backingPage"),
+    [BRAKE_TURN_PAGE]:document.getElementById("brakeTurnPage")
+  };
 
-  if(page===AA_PAGE){
-    roadCoursePage.classList.remove("active-page");
-    backingPage.classList.remove("active-page");
-    brakeTurnPage.classList.remove("active-page");
-    aaPage.classList.add("active-page");
-  }else if(page===BACKING_PAGE){
-    roadCoursePage.classList.remove("active-page");
-    aaPage.classList.remove("active-page");
-    brakeTurnPage.classList.remove("active-page");
-    backingPage.classList.add("active-page");
-  }else if(page===BRAKE_TURN_PAGE){
-    roadCoursePage.classList.remove("active-page");
-    aaPage.classList.remove("active-page");
-    backingPage.classList.remove("active-page");
-    brakeTurnPage.classList.add("active-page");
-  }else{
-    aaPage.classList.remove("active-page");
-    backingPage.classList.remove("active-page");
-    brakeTurnPage.classList.remove("active-page");
-    roadCoursePage.classList.add("active-page");
-  }
+  Object.values(pages).forEach(el=>{
+    if(el) el.classList.remove("active-page");
+  });
+
+  const target=pages[page] || pages[ROAD_COURSE_PAGE];
+  if(target) target.classList.add("active-page");
 }
 
 function checkPin(){
@@ -168,15 +155,20 @@ function updateDisplay(){
 }
 
 function updateBackingDisplay(){
+ const display=document.getElementById("backingTimerDisplay");
+ if(!display) return;
  let m=String(Math.floor(backingSeconds/60)).padStart(2,'0');
  let s=String(backingSeconds%60).padStart(2,'0');
- backingTimerDisplay.innerText=`${m}:${s}`;
+ display.innerText=`${m}:${s}`;
 }
 
 function startBackingTimer(){
+ const pauseBtn=document.getElementById("backingPauseBtn");
+ if(!pauseBtn) return;
+
  if(!backingRunning){
    backingRunning=true;
-   backingPauseBtn.innerText="Pause";
+   pauseBtn.innerText="Pause";
 
    backingTimer=setInterval(()=>{
      backingSeconds++;
@@ -191,17 +183,23 @@ function pauseBackingTimer(){
 }
 
 function toggleBackingPauseResume(){
+ const pauseBtn=document.getElementById("backingPauseBtn");
+ if(!pauseBtn) return;
+
  if(backingRunning){
    pauseBackingTimer();
-   backingPauseBtn.innerText="Resume";
+   pauseBtn.innerText="Resume";
  }else{
    startBackingTimer();
  }
 }
 
 function endBackingTimer(){
+ const pauseBtn=document.getElementById("backingPauseBtn");
+ if(!pauseBtn) return;
+
  pauseBackingTimer();
- backingPauseBtn.innerText="Resume";
+ pauseBtn.innerText="Resume";
  updateBackingDisplay();
 }
 
@@ -747,15 +745,19 @@ function clearAAForm(){
 }
 
 function clearBackingForm(){
- document.getElementById("backingCadetSelect").selectedIndex=0;
+ const backingCadetSelect=document.getElementById("backingCadetSelect");
+ const backingComments=document.getElementById("backingComments");
+ const backingPauseBtn=document.getElementById("backingPauseBtn");
+
+ if(backingCadetSelect) backingCadetSelect.selectedIndex=0;
  document.querySelectorAll('input[name="backingObservationMethod"]').forEach(c=>c.checked=false);
  document.querySelectorAll('input[name="backingResult"]').forEach(c=>c.checked=false);
  document.querySelectorAll(".backing-cone-checkbox").forEach(c=>c.checked=false);
- document.getElementById("backingComments").value="";
+ if(backingComments) backingComments.value="";
 
  backingSeconds=0;
  pauseBackingTimer();
- backingPauseBtn.innerText="Pause";
+ if(backingPauseBtn) backingPauseBtn.innerText="Pause";
  updateBackingDisplay();
 }
 
@@ -877,14 +879,15 @@ async function loadRoster(){
 
  let data=await res.json();
 
- cadetSelect.innerHTML=
- "<option>Select Cadet</option>";
- aaCadetSelect.innerHTML=
- "<option>Select Cadet</option>";
- backingCadetSelect.innerHTML=
- "<option>Select Cadet</option>";
- brakeTurnCadetSelect.innerHTML=
- "<option>Select Cadet</option>";
+ const cadetSelectEl=document.getElementById("cadetSelect");
+ const aaCadetSelectEl=document.getElementById("aaCadetSelect");
+ const backingCadetSelectEl=document.getElementById("backingCadetSelect");
+ const brakeTurnCadetSelectEl=document.getElementById("brakeTurnCadetSelect");
+
+ [cadetSelectEl,aaCadetSelectEl,backingCadetSelectEl,brakeTurnCadetSelectEl]
+ .forEach(select=>{
+   if(select) select.innerHTML="<option>Select Cadet</option>";
+ });
 
  data.forEach(r=>{
 
@@ -896,10 +899,10 @@ async function loadRoster(){
 
    opt.text=name;
 
-   cadetSelect.add(opt);
-   aaCadetSelect.add(opt.cloneNode(true));
-   backingCadetSelect.add(opt.cloneNode(true));
-   brakeTurnCadetSelect.add(opt.cloneNode(true));
+   if(cadetSelectEl) cadetSelectEl.add(opt);
+   if(aaCadetSelectEl) aaCadetSelectEl.add(opt.cloneNode(true));
+   if(backingCadetSelectEl) backingCadetSelectEl.add(opt.cloneNode(true));
+   if(brakeTurnCadetSelectEl) brakeTurnCadetSelectEl.add(opt.cloneNode(true));
 
  });
 
