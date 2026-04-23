@@ -386,6 +386,13 @@ letter-spacing:2px;
 color:#f4f7ff;
 }
 
+#lollipopTimerDisplay{
+font-size:88px;
+font-weight:500;
+letter-spacing:2px;
+color:#f4f7ff;
+}
+
 .backing-cones-block{
 max-width:620px;
 }
@@ -449,6 +456,20 @@ padding:4px 6px;
 .brake-turn-off-course{
 width:max-content;
 margin:4px auto 0;
+}
+
+.lollipop-cones-grid{
+display:grid;
+grid-template-columns:auto 76px;
+gap:8px 10px;
+width:max-content;
+align-items:center;
+}
+
+.lollipop-cones-grid input[type="text"]{
+width:76px;
+box-sizing:border-box;
+padding:4px 6px;
 }
 
 /* FOOTER */
@@ -562,6 +583,10 @@ width:100%;
 }
 
 #backingTimerDisplay{
+font-size:64px;
+}
+
+#lollipopTimerDisplay{
 font-size:64px;
 }
 
