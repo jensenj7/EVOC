@@ -571,11 +571,11 @@ function submitBackingRun(){
    sheet:"Backing",
    timestamp:new Date().toISOString(),
    cadet,
-   finalTime,
    observationMethod,
    conesHit,
-   instructorComments:comments,
-   result
+   totalTime:finalTime,
+   result,
+   instructorComments:comments
  };
 
  queueRun(payload);
