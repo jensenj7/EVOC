@@ -280,6 +280,10 @@ margin-bottom:10px;
 grid-template-columns:minmax(160px,220px);
 }
 
+.two-field-grid{
+grid-template-columns:repeat(2,minmax(140px,1fr));
+}
+
 .aa-field{
 display:flex;
 flex-direction:column;
@@ -567,6 +571,10 @@ font-size:24px;
 }
 
 .aa-grid{
+grid-template-columns:1fr;
+}
+
+.two-field-grid{
 grid-template-columns:1fr;
 }
 
