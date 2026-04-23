@@ -36,6 +36,7 @@
       <option value="aa">AA</option>
       <option value="backing">Backing</option>
       <option value="brake-turn">Brake/Turn</option>
+      <option value="lollipop">Lollipop</option>
     </select>
   </div>
 
@@ -333,6 +334,79 @@
         <li>Identify how to analyze choices and execute maneuvers all at a required speed.</li>
         <li>Understand that driving is a far more mental process than physical.</li>
         <li>Understand the importance of vehicle placement and stopping distances.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="lollipopPage" class="course-page">
+    <h2 class="aa-title">Lollipop</h2>
+
+    <div class="top-bar">
+      <div class="cadet-block">
+        <label>Cadet</label>
+        <select id="lollipopCadetSelect"></select>
+      </div>
+    </div>
+
+    <div class="backing-timer-row">
+      <div class="backing-button-column">
+        <button class="timer-btn start-btn" onclick="startLollipopTimer()">Start</button>
+        <button class="timer-btn pause-btn" id="lollipopPauseBtn" onclick="toggleLollipopPauseResume()">Pause</button>
+        <button class="timer-btn end-btn" onclick="endLollipopTimer()">End</button>
+      </div>
+
+      <div class="timer-box backing-timer-box">
+        <div id="lollipopTimerDisplay">00:00</div>
+      </div>
+    </div>
+
+    <div class="aa-subheading">Direction</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="lollipopDirection" onchange="handleLollipopDirectionSelection(this)"> Left</label>
+      <label><input type="checkbox" name="lollipopDirection" onchange="handleLollipopDirectionSelection(this)"> Right</label>
+    </div>
+
+    <div class="aa-subheading">Cones Hit</div>
+    <div class="lollipop-cones-grid">
+      <label><input type="checkbox" class="lollipop-cone-checkbox" data-location="Circle"> Circle</label>
+      <input type="text" id="lollipopCircleCount" inputmode="numeric" placeholder="#">
+      <label><input type="checkbox" class="lollipop-cone-checkbox" data-location="Slalom"> Slalom</label>
+      <input type="text" id="lollipopSlalomCount" inputmode="numeric" placeholder="#">
+    </div>
+
+    <div class="aa-subheading">Instructor Observations</div>
+    <div class="results-block">
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Did not shuffle steer"> Did not shuffle steer</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Did not hit appropriate apex"> Did not hit appropriate apex</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Overall too slow"> Overall too slow</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Applied brakes"> Applied brakes</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Entry speed too fast"> Entry speed too fast</label>
+    </div>
+
+    <div class="aa-subheading">Result</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="lollipopResult" onchange="handleLollipopResultSelection(this)"> Qualifying</label>
+      <label><input type="checkbox" name="lollipopResult" onchange="handleLollipopResultSelection(this)"> Non-Qualifying</label>
+      <label><input type="checkbox" name="lollipopResult" onchange="handleLollipopResultSelection(this)"> Remedial</label>
+    </div>
+
+    <div class="footer">
+      <div class="sync-status" id="lollipopSyncStatus">All runs synced</div>
+      <button class="submit-btn" onclick="submitLollipopRun()">Submit</button>
+    </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs at 21 seconds or less.</p>
+      <p>Student will drive in the direction given by the instructor with hitting any cones.</p>
+      <p>Use of brakes on any portion of this skills course is disqualifying.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Learn the decisional process and hot it relates to space and time management.</li>
+        <li>Understand the relationship of vehicle placement to corner entry.</li>
+        <li>Understand the importance of proper seating and how it contributes to overall driver control.</li>
+        <li>Understand steering inputs and time when going around obstacles.</li>
       </ul>
     </div>
   </div>
