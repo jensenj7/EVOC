@@ -5,13 +5,15 @@ const ROAD_COURSE_PAGE = "road-course";
 const AA_PAGE = "aa";
 const BACKING_PAGE = "backing";
 const BRAKE_TURN_PAGE = "brake-turn";
+const LOLLIPOP_PAGE = "lollipop";
 
 function switchPage(page){
   const pages={
     [ROAD_COURSE_PAGE]:document.getElementById("roadCoursePage"),
     [AA_PAGE]:document.getElementById("aaPage"),
     [BACKING_PAGE]:document.getElementById("backingPage"),
-    [BRAKE_TURN_PAGE]:document.getElementById("brakeTurnPage")
+    [BRAKE_TURN_PAGE]:document.getElementById("brakeTurnPage"),
+    [LOLLIPOP_PAGE]:document.getElementById("lollipopPage")
   };
 
   Object.values(pages).forEach(el=>{
@@ -42,6 +44,9 @@ let running=false;
 let backingSeconds=0;
 let backingTimer=null;
 let backingRunning=false;
+let lollipopSeconds=0;
+let lollipopTimer=null;
+let lollipopRunning=false;
 
 function handleRunTypeSelection(selected){
  document
@@ -106,6 +111,26 @@ function handleBrakeTurnApexSelection(selected){
 function handleBrakeTurnResultSelection(selected){
  document
  .querySelectorAll('input[name="brakeTurnResult"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleLollipopDirectionSelection(selected){
+ document
+ .querySelectorAll('input[name="lollipopDirection"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleLollipopResultSelection(selected){
+ document
+ .querySelectorAll('input[name="lollipopResult"]')
  .forEach(option=>{
    if(option!==selected){
      option.checked=false;
@@ -201,6 +226,55 @@ function endBackingTimer(){
  pauseBackingTimer();
  pauseBtn.innerText="Resume";
  updateBackingDisplay();
+}
+
+function updateLollipopDisplay(){
+ const display=document.getElementById("lollipopTimerDisplay");
+ if(!display) return;
+ let m=String(Math.floor(lollipopSeconds/60)).padStart(2,'0');
+ let s=String(lollipopSeconds%60).padStart(2,'0');
+ display.innerText=`${m}:${s}`;
+}
+
+function startLollipopTimer(){
+ const pauseBtn=document.getElementById("lollipopPauseBtn");
+ if(!pauseBtn) return;
+
+ if(!lollipopRunning){
+   lollipopRunning=true;
+   pauseBtn.innerText="Pause";
+
+   lollipopTimer=setInterval(()=>{
+     lollipopSeconds++;
+     updateLollipopDisplay();
+   },1000);
+ }
+}
+
+function pauseLollipopTimer(){
+ clearInterval(lollipopTimer);
+ lollipopRunning=false;
+}
+
+function toggleLollipopPauseResume(){
+ const pauseBtn=document.getElementById("lollipopPauseBtn");
+ if(!pauseBtn) return;
+
+ if(lollipopRunning){
+   pauseLollipopTimer();
+   pauseBtn.innerText="Resume";
+ }else{
+   startLollipopTimer();
+ }
+}
+
+function endLollipopTimer(){
+ const pauseBtn=document.getElementById("lollipopPauseBtn");
+ if(!pauseBtn) return;
+
+ pauseLollipopTimer();
+ pauseBtn.innerText="Resume";
+ updateLollipopDisplay();
 }
 
 // SPLITS
@@ -535,6 +609,35 @@ function buildBrakeTurnConeHitSummary(){
  return hits.join(", ");
 }
 
+function buildLollipopConeHitSummary(){
+ const hits=[];
+ const circle=document.querySelector('.lollipop-cone-checkbox[data-location="Circle"]');
+ const slalom=document.querySelector('.lollipop-cone-checkbox[data-location="Slalom"]');
+ const circleCountInput=document.getElementById("lollipopCircleCount");
+ const slalomCountInput=document.getElementById("lollipopSlalomCount");
+ const circleCount=cleanText(circleCountInput ? circleCountInput.value : "");
+ const slalomCount=cleanText(slalomCountInput ? slalomCountInput.value : "");
+
+ if(circle && circle.checked){
+   hits.push(`Circle${circleCount ? ` ${circleCount}` : ""}`);
+ }
+
+ if(slalom && slalom.checked){
+   hits.push(`Slalom${slalomCount ? ` ${slalomCount}` : ""}`);
+ }
+
+ return hits.join(", ");
+}
+
+function buildLollipopObservationSummary(){
+ const selections=
+ [...document.querySelectorAll(".lollipop-observation-checkbox:checked")]
+ .map(input=>input.value.trim())
+ .filter(Boolean);
+
+ return selections.join(", ");
+}
+
 // SUBMIT
 function submitRun(){
 
@@ -694,6 +797,45 @@ function submitBrakeTurnRun(){
  clearBrakeTurnForm();
 }
 
+function submitLollipopRun(){
+ const cadet=cleanText(document.getElementById("lollipopCadetSelect").value);
+ const directionSelections=
+ [...document.querySelectorAll('input[name="lollipopDirection"]:checked')];
+ const direction=
+ directionSelections.length===1
+ ? cleanText(directionSelections[0].parentElement.textContent)
+ : "";
+ const conesHit=cleanText(buildLollipopConeHitSummary());
+ const instructorObservations=cleanText(buildLollipopObservationSummary());
+ const resultSelections=
+ [...document.querySelectorAll('input[name="lollipopResult"]:checked')];
+ const result=
+ resultSelections.length===1
+ ? cleanText(resultSelections[0].parentElement.textContent)
+ : "";
+ const totalTime=cleanText(format(lollipopSeconds));
+
+ if(!cadet || !direction || !result){
+   alert("Missing required Lollipop fields");
+   return;
+ }
+
+ const payload={
+   sheet:"Lollipop",
+   timestamp:new Date().toISOString(),
+   cadet,
+   direction,
+   conesHit,
+   instructorObservations,
+   totalTime,
+   result
+ };
+
+ queueRun(payload);
+ flushQueuedRuns();
+ clearLollipopForm();
+}
+
 // CLEAR
 function clearAll(){
 
@@ -773,8 +915,29 @@ function clearBrakeTurnForm(){
  document.getElementById("brakeTurnComments").value="";
 }
 
+function clearLollipopForm(){
+ const lollipopCadetSelect=document.getElementById("lollipopCadetSelect");
+ const lollipopPauseBtn=document.getElementById("lollipopPauseBtn");
+ const circleCount=document.getElementById("lollipopCircleCount");
+ const slalomCount=document.getElementById("lollipopSlalomCount");
+ if(lollipopCadetSelect) lollipopCadetSelect.selectedIndex=0;
+
+ document.querySelectorAll('input[name="lollipopDirection"]').forEach(c=>c.checked=false);
+ document.querySelectorAll('input[name="lollipopResult"]').forEach(c=>c.checked=false);
+ document.querySelectorAll(".lollipop-cone-checkbox").forEach(c=>c.checked=false);
+ document.querySelectorAll(".lollipop-observation-checkbox").forEach(c=>c.checked=false);
+ if(circleCount) circleCount.value="";
+ if(slalomCount) slalomCount.value="";
+
+ lollipopSeconds=0;
+ pauseLollipopTimer();
+ if(lollipopPauseBtn) lollipopPauseBtn.innerText="Pause";
+ updateLollipopDisplay();
+}
+
 evaluate();
 updateBackingDisplay();
+updateLollipopDisplay();
 
 function getQueuedRuns(){
  try{
@@ -794,6 +957,7 @@ function updateSyncStatus(){
  const aaSyncStatus=document.getElementById("aaSyncStatus");
  const backingSyncStatus=document.getElementById("backingSyncStatus");
  const brakeTurnSyncStatus=document.getElementById("brakeTurnSyncStatus");
+ const lollipopSyncStatus=document.getElementById("lollipopSyncStatus");
  if(!syncStatus) return;
 
  const queued=getQueuedRuns().length;
@@ -803,6 +967,7 @@ function updateSyncStatus(){
    if(aaSyncStatus) aaSyncStatus.innerText="All runs synced";
    if(backingSyncStatus) backingSyncStatus.innerText="All runs synced";
    if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText="All runs synced";
+   if(lollipopSyncStatus) lollipopSyncStatus.innerText="All runs synced";
    return;
  }
 
@@ -811,11 +976,13 @@ function updateSyncStatus(){
    if(aaSyncStatus) aaSyncStatus.innerText=`${queued} run(s) pending sync`;
    if(backingSyncStatus) backingSyncStatus.innerText=`${queued} run(s) pending sync`;
    if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText=`${queued} run(s) pending sync`;
+   if(lollipopSyncStatus) lollipopSyncStatus.innerText=`${queued} run(s) pending sync`;
  }else{
    syncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(aaSyncStatus) aaSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(backingSyncStatus) backingSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
+   if(lollipopSyncStatus) lollipopSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
  }
 }
 
@@ -883,8 +1050,9 @@ async function loadRoster(){
  const aaCadetSelectEl=document.getElementById("aaCadetSelect");
  const backingCadetSelectEl=document.getElementById("backingCadetSelect");
  const brakeTurnCadetSelectEl=document.getElementById("brakeTurnCadetSelect");
+ const lollipopCadetSelectEl=document.getElementById("lollipopCadetSelect");
 
- [cadetSelectEl,aaCadetSelectEl,backingCadetSelectEl,brakeTurnCadetSelectEl]
+ [cadetSelectEl,aaCadetSelectEl,backingCadetSelectEl,brakeTurnCadetSelectEl,lollipopCadetSelectEl]
  .forEach(select=>{
    if(select) select.innerHTML="<option>Select Cadet</option>";
  });
@@ -903,6 +1071,7 @@ async function loadRoster(){
    if(aaCadetSelectEl) aaCadetSelectEl.add(opt.cloneNode(true));
    if(backingCadetSelectEl) backingCadetSelectEl.add(opt.cloneNode(true));
    if(brakeTurnCadetSelectEl) brakeTurnCadetSelectEl.add(opt.cloneNode(true));
+   if(lollipopCadetSelectEl) lollipopCadetSelectEl.add(opt.cloneNode(true));
 
  });
 
