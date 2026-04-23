@@ -35,6 +35,7 @@
       <option value="road-course">Road Course</option>
       <option value="aa">AA</option>
       <option value="backing">Backing</option>
+      <option value="brake-turn">Brake/Turn</option>
     </select>
   </div>
 
@@ -240,6 +241,98 @@
         <li>Understand limitations of view while backing.</li>
         <li>Understand why backing is one of the three maneuvers that police officers are more likely to become involved in a crash.</li>
         <li>Understand that slower speeds are better when in reverse.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="brakeTurnPage" class="course-page">
+    <h2 class="aa-title">Brake, then Turn</h2>
+
+    <div class="top-bar">
+      <div class="cadet-block">
+        <label>Cadet</label>
+        <select id="brakeTurnCadetSelect"></select>
+      </div>
+    </div>
+
+    <div class="aa-subheading">Entry Speed</div>
+    <div class="aa-grid single-field-grid">
+      <div class="aa-field">
+        <input type="text" id="brakeTurnEntrySpeed" inputmode="numeric" placeholder="mph">
+      </div>
+    </div>
+
+    <div class="aa-subheading">Braking</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Appropriate</label>
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Too early</label>
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Too long</label>
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Not enough brake</label>
+    </div>
+
+    <div class="aa-subheading">Apex</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> No apex</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Early apex</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> True apex</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Late apex (Appropriate)</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Late and deep (Appropriate)</label>
+    </div>
+
+    <div class="aa-subheading">Cones Hit</div>
+    <div class="table-header brake-turn-cones-header">
+      <div>Location</div>
+      <div class="center">Inside</div>
+      <div class="center">Outside</div>
+      <div class="center"># Cones</div>
+    </div>
+
+    <div id="brakeTurnConesContainer">
+      <div class="brake-turn-cone-row">
+        <div>North Straight</div>
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="North Straight" data-side="inside">
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="North Straight" data-side="outside">
+        <input type="text" class="brake-turn-cone-count" data-location="North Straight" inputmode="numeric">
+      </div>
+      <div class="brake-turn-cone-row">
+        <div>Turn</div>
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="Turn" data-side="inside">
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="Turn" data-side="outside">
+        <input type="text" class="brake-turn-cone-count" data-location="Turn" inputmode="numeric">
+      </div>
+      <div class="brake-turn-off-course">
+        <label><input type="checkbox" id="brakeTurnOffCourse"> Off Course</label>
+      </div>
+    </div>
+
+    <div class="aa-subheading">Results</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="brakeTurnResult" onchange="handleBrakeTurnResultSelection(this)"> Qualifying</label>
+      <label><input type="checkbox" name="brakeTurnResult" onchange="handleBrakeTurnResultSelection(this)"> Non-Qualifying</label>
+      <label><input type="checkbox" name="brakeTurnResult" onchange="handleBrakeTurnResultSelection(this)"> Remedial</label>
+    </div>
+
+    <div class="comments-label">Instructor Comments</div>
+    <textarea id="brakeTurnComments" placeholder="optional"></textarea>
+
+    <div class="footer">
+      <div class="sync-status" id="brakeTurnSyncStatus">All runs synced</div>
+      <button class="submit-btn" onclick="submitBrakeTurnRun()">Submit</button>
+    </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs at 50 MPH.</p>
+      <p>Students will enter turn at minimum speed of 50 MPH.</p>
+      <p>Students will align vehicle in proper lane alignment and brake prior to entering turn for no more than one (1) second.</p>
+      <p>Student will use proper “LATE APEX” to complete turn without leaving the course or hitting any cones.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Identify the decisional process and how it relates to space and judgement.</li>
+        <li>Identify how to analyze choices and execute maneuvers all at a required speed.</li>
+        <li>Understand that driving is a far more mental process than physical.</li>
+        <li>Understand the importance of vehicle placement and stopping distances.</li>
       </ul>
     </div>
   </div>
