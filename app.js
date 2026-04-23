@@ -4,23 +4,33 @@ const RUN_QUEUE_KEY = "evocRunQueue";
 const ROAD_COURSE_PAGE = "road-course";
 const AA_PAGE = "aa";
 const BACKING_PAGE = "backing";
+const BRAKE_TURN_PAGE = "brake-turn";
 
 function switchPage(page){
   const roadCoursePage=document.getElementById("roadCoursePage");
   const aaPage=document.getElementById("aaPage");
   const backingPage=document.getElementById("backingPage");
+  const brakeTurnPage=document.getElementById("brakeTurnPage");
 
   if(page===AA_PAGE){
     roadCoursePage.classList.remove("active-page");
     backingPage.classList.remove("active-page");
+    brakeTurnPage.classList.remove("active-page");
     aaPage.classList.add("active-page");
   }else if(page===BACKING_PAGE){
     roadCoursePage.classList.remove("active-page");
     aaPage.classList.remove("active-page");
+    brakeTurnPage.classList.remove("active-page");
     backingPage.classList.add("active-page");
+  }else if(page===BRAKE_TURN_PAGE){
+    roadCoursePage.classList.remove("active-page");
+    aaPage.classList.remove("active-page");
+    backingPage.classList.remove("active-page");
+    brakeTurnPage.classList.add("active-page");
   }else{
     aaPage.classList.remove("active-page");
     backingPage.classList.remove("active-page");
+    brakeTurnPage.classList.remove("active-page");
     roadCoursePage.classList.add("active-page");
   }
 }
@@ -79,6 +89,36 @@ function handleBackingObservationSelection(selected){
 function handleBackingResultSelection(selected){
  document
  .querySelectorAll('input[name="backingResult"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleBrakeTurnBrakingSelection(selected){
+ document
+ .querySelectorAll('input[name="brakeTurnBraking"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleBrakeTurnApexSelection(selected){
+ document
+ .querySelectorAll('input[name="brakeTurnApex"]')
+ .forEach(option=>{
+   if(option!==selected){
+     option.checked=false;
+   }
+ });
+}
+
+function handleBrakeTurnResultSelection(selected){
+ document
+ .querySelectorAll('input[name="brakeTurnResult"]')
  .forEach(option=>{
    if(option!==selected){
      option.checked=false;
@@ -470,6 +510,33 @@ function buildBackingConeHitSummary(){
  return hits.join(", ");
 }
 
+function buildBrakeTurnConeHitSummary(){
+ const hits=[];
+ const rows=[...document.querySelectorAll(".brake-turn-cone-row")];
+
+ rows.forEach(row=>{
+   const location=row.children[0].innerText.trim();
+   const inside=row.children[1];
+   const outside=row.children[2];
+   const count=(row.children[3].value || "").trim();
+
+   if(inside.checked){
+     hits.push(`${location}${count ? ` ${count}` : ""} inside`);
+   }
+
+   if(outside.checked){
+     hits.push(`${location}${count ? ` ${count}` : ""} outside`);
+   }
+ });
+
+ const offCourse=document.getElementById("brakeTurnOffCourse");
+ if(offCourse && offCourse.checked){
+   hits.push("Off Course");
+ }
+
+ return hits.join(", ");
+}
+
 // SUBMIT
 function submitRun(){
 
@@ -583,6 +650,52 @@ function submitBackingRun(){
  clearBackingForm();
 }
 
+function submitBrakeTurnRun(){
+ const cadet=cleanText(document.getElementById("brakeTurnCadetSelect").value);
+ const entrySpeed=cleanText(document.getElementById("brakeTurnEntrySpeed").value);
+ const brakingSelections=
+ [...document.querySelectorAll('input[name="brakeTurnBraking"]:checked')];
+ const braking=
+ brakingSelections.length===1
+ ? cleanText(brakingSelections[0].parentElement.textContent)
+ : "";
+ const apexSelections=
+ [...document.querySelectorAll('input[name="brakeTurnApex"]:checked')];
+ const apex=
+ apexSelections.length===1
+ ? cleanText(apexSelections[0].parentElement.textContent)
+ : "";
+ const conesHit=cleanText(buildBrakeTurnConeHitSummary());
+ const resultSelections=
+ [...document.querySelectorAll('input[name="brakeTurnResult"]:checked')];
+ const result=
+ resultSelections.length===1
+ ? cleanText(resultSelections[0].parentElement.textContent)
+ : "";
+ const comments=cleanText(document.getElementById("brakeTurnComments").value);
+
+ if(!cadet || !entrySpeed || !braking || !apex || !result){
+   alert("Missing required Brake/Turn fields");
+   return;
+ }
+
+ const payload={
+   sheet:"B&T",
+   timestamp:new Date().toISOString(),
+   cadet,
+   entrySpeed,
+   braking,
+   apex,
+   conesHit,
+   result,
+   instructorComments:comments
+ };
+
+ queueRun(payload);
+ flushQueuedRuns();
+ clearBrakeTurnForm();
+}
+
 // CLEAR
 function clearAll(){
 
@@ -646,6 +759,18 @@ function clearBackingForm(){
  updateBackingDisplay();
 }
 
+function clearBrakeTurnForm(){
+ document.getElementById("brakeTurnCadetSelect").selectedIndex=0;
+ document.getElementById("brakeTurnEntrySpeed").value="";
+ document.querySelectorAll('input[name="brakeTurnBraking"]').forEach(c=>c.checked=false);
+ document.querySelectorAll('input[name="brakeTurnApex"]').forEach(c=>c.checked=false);
+ document.querySelectorAll('input[name="brakeTurnResult"]').forEach(c=>c.checked=false);
+ document.querySelectorAll(".brake-turn-cone-checkbox").forEach(c=>c.checked=false);
+ document.querySelectorAll(".brake-turn-cone-count").forEach(c=>c.value="");
+ document.getElementById("brakeTurnOffCourse").checked=false;
+ document.getElementById("brakeTurnComments").value="";
+}
+
 evaluate();
 updateBackingDisplay();
 
@@ -666,6 +791,7 @@ function updateSyncStatus(){
  const syncStatus=document.getElementById("syncStatus");
  const aaSyncStatus=document.getElementById("aaSyncStatus");
  const backingSyncStatus=document.getElementById("backingSyncStatus");
+ const brakeTurnSyncStatus=document.getElementById("brakeTurnSyncStatus");
  if(!syncStatus) return;
 
  const queued=getQueuedRuns().length;
@@ -674,6 +800,7 @@ function updateSyncStatus(){
    syncStatus.innerText="All runs synced";
    if(aaSyncStatus) aaSyncStatus.innerText="All runs synced";
    if(backingSyncStatus) backingSyncStatus.innerText="All runs synced";
+   if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText="All runs synced";
    return;
  }
 
@@ -681,10 +808,12 @@ function updateSyncStatus(){
    syncStatus.innerText=`${queued} run(s) pending sync`;
    if(aaSyncStatus) aaSyncStatus.innerText=`${queued} run(s) pending sync`;
    if(backingSyncStatus) backingSyncStatus.innerText=`${queued} run(s) pending sync`;
+   if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText=`${queued} run(s) pending sync`;
  }else{
    syncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(aaSyncStatus) aaSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
    if(backingSyncStatus) backingSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
+   if(brakeTurnSyncStatus) brakeTurnSyncStatus.innerText=`Offline: ${queued} run(s) pending sync`;
  }
 }
 
@@ -754,6 +883,8 @@ async function loadRoster(){
  "<option>Select Cadet</option>";
  backingCadetSelect.innerHTML=
  "<option>Select Cadet</option>";
+ brakeTurnCadetSelect.innerHTML=
+ "<option>Select Cadet</option>";
 
  data.forEach(r=>{
 
@@ -768,6 +899,7 @@ async function loadRoster(){
    cadetSelect.add(opt);
    aaCadetSelect.add(opt.cloneNode(true));
    backingCadetSelect.add(opt.cloneNode(true));
+   brakeTurnCadetSelect.add(opt.cloneNode(true));
 
  });
 
