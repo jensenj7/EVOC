@@ -37,6 +37,7 @@
       <option value="backing">Backing</option>
       <option value="brake-turn">Brake/Turn</option>
       <option value="lollipop">Lollipop</option>
+      <option value="slalom">Slalom</option>
     </select>
   </div>
 
@@ -407,6 +408,73 @@
         <li>Understand the relationship of vehicle placement to corner entry.</li>
         <li>Understand the importance of proper seating and how it contributes to overall driver control.</li>
         <li>Understand steering inputs and time when going around obstacles.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="slalomPage" class="course-page">
+    <h2 class="aa-title">Slalom</h2>
+
+    <div class="top-bar">
+      <div class="cadet-block">
+        <label>Cadet</label>
+        <select id="slalomCadetSelect"></select>
+      </div>
+    </div>
+
+    <div class="aa-subheading">Speed</div>
+    <div class="aa-grid two-field-grid">
+      <div class="aa-field">
+        <label for="slalomSpeedIn">Speed In</label>
+        <input type="text" id="slalomSpeedIn" inputmode="numeric" placeholder="mph">
+      </div>
+
+      <div class="aa-field">
+        <label for="slalomSpeedOut">Speed Out</label>
+        <input type="text" id="slalomSpeedOut" inputmode="numeric" placeholder="mph">
+      </div>
+    </div>
+
+    <div class="aa-subheading">Instructor Observations</div>
+    <div class="results-block">
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Utilized brakes in the middle of course"> Utilized brakes in the middle of course</label>
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Did not modulate speed throughout course"> Did not modulate speed throughout course</label>
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Did not shuffle steer"> Did not shuffle steer</label>
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Improper apexing"> Improper apexing</label>
+    </div>
+
+    <div class="aa-subheading">Total Cones Hit</div>
+    <div class="aa-grid single-field-grid">
+      <div class="aa-field">
+        <input type="text" id="slalomTotalConesHit" inputmode="numeric" placeholder="Total cones hit">
+      </div>
+    </div>
+
+    <div class="aa-subheading">Result</div>
+    <div class="results-block">
+      <label><input type="checkbox" name="slalomResult" onchange="handleSlalomResultSelection(this)"> Qualifying</label>
+      <label><input type="checkbox" name="slalomResult" onchange="handleSlalomResultSelection(this)"> Non-Qualifying</label>
+      <label><input type="checkbox" name="slalomResult" onchange="handleSlalomResultSelection(this)"> Remedial</label>
+    </div>
+
+    <div class="footer">
+      <div class="sync-status" id="slalomSyncStatus">All runs synced</div>
+      <button class="submit-btn" onclick="submitSlalomRun()">Submit</button>
+    </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs at an average speed of 28 MPH.</p>
+      <p>Student will maintain the 28 MPH speed throughout the exercise without hitting cones.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Utilize proper seating and hand position while driving.</li>
+        <li>Utilize proper timing of steering inputs, or how to time your steering when driving around obstacles.</li>
+        <li>Develop hand and eye coordination.</li>
+        <li>Understand the relationship of feet per second and how it relates to timing of steering around obstacles.</li>
+        <li>Understand weight transfer and how a little change in speed can make a large change in how the vehicle reacts.</li>
+        <li>Learn proper steering skills (shuffle steering) that will be needed for more complicated maneuvers.</li>
       </ul>
     </div>
   </div>
