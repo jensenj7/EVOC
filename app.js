@@ -199,6 +199,23 @@ function updateBackingDisplay(){
  display.innerText=`${m}:${s}`;
 }
 
+function parseTimeToSeconds(value){
+ const input=cleanText(value);
+ if(!input) return null;
+
+ if(/^\d+$/.test(input)){
+   return Number(input);
+ }
+
+ if(/^\d{1,2}:\d{2}$/.test(input)){
+   const [m,s]=input.split(":").map(Number);
+   if(s>=60) return null;
+   return (m*60)+s;
+ }
+
+ return null;
+}
+
 function startBackingTimer(){
  const pauseBtn=document.getElementById("backingPauseBtn");
  if(!pauseBtn) return;
@@ -238,6 +255,24 @@ function endBackingTimer(){
  pauseBackingTimer();
  pauseBtn.innerText="Resume";
  updateBackingDisplay();
+}
+
+function editBackingTimer(){
+ if(backingRunning) return;
+
+ editSplit(
+   format(backingSeconds),
+   "Edit Backing Time (mm:ss or seconds)",
+   function(val){
+     const parsed=parseTimeToSeconds(val);
+     if(parsed===null){
+       alert("Invalid time format. Use mm:ss or seconds.");
+       return;
+     }
+     backingSeconds=parsed;
+     updateBackingDisplay();
+   }
+ );
 }
 
 function updateLollipopDisplay(){
@@ -287,6 +322,24 @@ function endLollipopTimer(){
  pauseLollipopTimer();
  pauseBtn.innerText="Resume";
  updateLollipopDisplay();
+}
+
+function editLollipopTimer(){
+ if(lollipopRunning) return;
+
+ editSplit(
+   format(lollipopSeconds),
+   "Edit Lollipop Time (mm:ss or seconds)",
+   function(val){
+     const parsed=parseTimeToSeconds(val);
+     if(parsed===null){
+       alert("Invalid time format. Use mm:ss or seconds.");
+       return;
+     }
+     lollipopSeconds=parsed;
+     updateLollipopDisplay();
+   }
+ );
 }
 
 // SPLITS
@@ -749,7 +802,7 @@ function submitBackingRun(){
  ? cleanText(selectedResults[0].parentElement.textContent)
  : "";
  const comments=cleanText(document.getElementById("backingComments").value);
- const finalTime=cleanText(format(backingSeconds));
+ const finalTime=cleanText(String(backingSeconds));
 
  if(!cadet || !observationMethod || !result){
    alert("Missing required Backing fields");
@@ -834,7 +887,7 @@ function submitLollipopRun(){
  resultSelections.length===1
  ? cleanText(resultSelections[0].parentElement.textContent)
  : "";
- const totalTime=cleanText(format(lollipopSeconds));
+ const totalTime=cleanText(String(lollipopSeconds));
 
  if(!cadet || !direction || !result){
    alert("Missing required Lollipop fields");
