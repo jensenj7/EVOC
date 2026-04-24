@@ -388,6 +388,7 @@ font-size:88px;
 font-weight:500;
 letter-spacing:2px;
 color:#f4f7ff;
+cursor:pointer;
 }
 
 #lollipopTimerDisplay{
@@ -395,6 +396,7 @@ font-size:88px;
 font-weight:500;
 letter-spacing:2px;
 color:#f4f7ff;
+cursor:pointer;
 }
 
 .backing-cones-block{
