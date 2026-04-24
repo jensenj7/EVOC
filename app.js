@@ -610,6 +610,19 @@ function splitOrBlank(value,defaultLabel){
  return value===defaultLabel ? "" : value;
 }
 
+function formatSkidTimeForSheet(value){
+ const cleaned=cleanText(value);
+ if(!cleaned) return "";
+ const parsed=parseTimeToSeconds(cleaned);
+ if(parsed===null) return cleaned;
+
+ if(parsed<60){
+   return `:${String(parsed).padStart(2,"0")}`;
+ }
+
+ return format(parsed);
+}
+
 function cleanText(value){
  return String(value || "")
  .replace(/\s+/g," ")
@@ -726,6 +739,7 @@ function submitRun(){
  : "";
 
  const finish=finishTimeValue.innerText;
+ const finalTimeSeconds=dnf ? "" : String(parseTimeToSeconds(finish) ?? "");
 
  if(!cadet || selectedRunTypes.length!==1 || !runType || (finish==="--:--" && !dnf)){
     alert("Missing required fields");
@@ -736,9 +750,10 @@ function submitRun(){
    sheet:"Road Course",
    cadet: cleanText(cadet),
    runType: cleanText(runType),
-   skidExitTime: cleanText(splitOrBlank(skidBtn.innerText,"Skid Exit")),
+   skidExitTime: cleanText(formatSkidTimeForSheet(splitOrBlank(skidBtn.innerText,"Skid Exit"))),
    northIntersectionTime: cleanText(splitOrBlank(northBtn.innerText,"North Intersection")),
    finalTime: cleanText(dnf ? "DNF" : finish),
+   finalTimeSeconds: cleanText(finalTimeSeconds),
    coneHitLocations: cleanText(buildConeHitSummary()),
    result: cleanText(document.getElementById("status").innerText),
    instructorComments: cleanText(document.getElementById("comments").value)
