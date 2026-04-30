@@ -519,7 +519,7 @@ const coneList=[
 "Slalom","Northeast Straight","Northeast Turn",
 "North Straight","Northwest Turn","North Intersection",
 "360 Turn","West Straight","Southwest Turn",
-"Serpentine","Lane Change"
+"Serpentine","Lane Change Gate 1","Lane Change Gate 2","Lane Change Gate 3"
 ];
 
 const aaConeLocations=[
