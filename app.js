@@ -43,12 +43,15 @@ function checkPin(){
 let seconds=0;
 let timer=null;
 let running=false;
+let startTimestamp=null;
 let backingSeconds=0;
 let backingTimer=null;
 let backingRunning=false;
+let backingStartTimestamp=null;
 let lollipopSeconds=0;
 let lollipopTimer=null;
 let lollipopRunning=false;
+let lollipopStartTimestamp=null;
 let audioCtx=null;
 
 function playStopwatchBeep(){
@@ -136,18 +139,20 @@ function startTimer(){
  playStopwatchBeep();
  if(!running){
    running=true;
+   startTimestamp=Date.now()-(seconds*1000);
    pauseBtn.innerText="Pause";
 
    timer=setInterval(()=>{
-      seconds++;
+      seconds=Math.floor((Date.now()-startTimestamp)/1000);
       updateDisplay();
       evaluate(); // live qualification evaluation
-   },1000);
+   },250);
  }
 }
 
 function pauseTimer(){
  clearInterval(timer);
+ startTimestamp=null;
  running=false;
 }
 
@@ -208,17 +213,19 @@ function startBackingTimer(){
  if(!backingRunning){
    playStopwatchBeep();
    backingRunning=true;
+   backingStartTimestamp=Date.now()-(backingSeconds*1000);
    pauseBtn.innerText="Pause";
 
    backingTimer=setInterval(()=>{
-     backingSeconds++;
+     backingSeconds=Math.floor((Date.now()-backingStartTimestamp)/1000);
      updateBackingDisplay();
-   },1000);
+   },250);
  }
 }
 
 function pauseBackingTimer(){
  clearInterval(backingTimer);
+ backingStartTimestamp=null;
  backingRunning=false;
 }
 
@@ -286,17 +293,19 @@ function startLollipopTimer(){
  if(!lollipopRunning){
    playStopwatchBeep();
    lollipopRunning=true;
+   lollipopStartTimestamp=Date.now()-(lollipopSeconds*1000);
    pauseBtn.innerText="Pause";
 
    lollipopTimer=setInterval(()=>{
-     lollipopSeconds++;
+     lollipopSeconds=Math.floor((Date.now()-lollipopStartTimestamp)/1000);
      updateLollipopDisplay();
-   },1000);
+   },250);
  }
 }
 
 function pauseLollipopTimer(){
  clearInterval(lollipopTimer);
+ lollipopStartTimestamp=null;
  lollipopRunning=false;
 }
 
