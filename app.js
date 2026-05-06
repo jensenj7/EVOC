@@ -363,42 +363,52 @@ let skidTime=null;
 let northTime=null;
 
 /* NON-BLOCKING EDITOR */
+function closePopupModal(){
+ const modal=document.getElementById("popupModal");
+ if(modal) modal.remove();
+}
+
+function openPopupModal(title,bodyHtml,onSave){
+ closePopupModal();
+
+ const modal=document.createElement("div");
+ modal.id="popupModal";
+ modal.className="popup-modal";
+
+ modal.innerHTML=`
+   <div class="popup-modal-card">
+     <h3>${title}</h3>
+     <div class="popup-modal-body">${bodyHtml}</div>
+     <div class="popup-modal-actions">
+       <button type="button" class="timer-btn clear-btn" id="popupCancelBtn">Cancel</button>
+       <button type="button" class="timer-btn start-btn" id="popupSaveBtn">Save</button>
+     </div>
+   </div>
+ `;
+
+ document.body.appendChild(modal);
+
+ const cancelBtn=document.getElementById("popupCancelBtn");
+ const saveBtn=document.getElementById("popupSaveBtn");
+ if(cancelBtn) cancelBtn.addEventListener("click",closePopupModal);
+ if(saveBtn){
+   saveBtn.addEventListener("click",function(){
+     if(onSave) onSave();
+   });
+ }
+}
+
 function editSplit(currentValue,title,callback){
-
- let value=window.open(
-   "",
-   "editBox",
-   "width=320,height=220"
+ openPopupModal(
+   title,
+   `<input id="popupEditValue" value="${currentValue}" class="popup-edit-input">`,
+   function(){
+     const input=document.getElementById("popupEditValue");
+     const newVal=input ? input.value : "";
+     if(callback) callback(newVal);
+     closePopupModal();
+   }
  );
-
- value.document.write(`
-   <html>
-   <body style="font-family:Arial;padding:20px;">
-   <h3>${title}</h3>
-
-   <input
-      id='newVal'
-      value='${currentValue}'
-      style='font-size:24px;width:120px;'>
-
-   <br><br>
-
-   <button onclick="
-      window.opener.receiveSplitEdit(
-        document.getElementById('newVal').value
-      );
-      window.close();
-   ">
-   Save
-   </button>
-
-   </body>
-   </html>
- `);
-
- window.receiveSplitEdit=function(newVal){
-    if(callback) callback(newVal);
- };
 }
 
 function handleSplit(type){
@@ -479,40 +489,24 @@ function openMultiGatePicker(inputEl){
  const selected=new Set(current);
  const options=["G1","G2","G3"];
 
- const pickWindow=window.open("","gatePicker","width=320,height=260");
- if(!pickWindow) return;
-
  const renderOptions=options.map(opt=>`
-   <label style="display:block;margin:6px 0;">
-     <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}>
+   <label class="popup-check-row">
+     <input type="checkbox" class="popup-check-input" value="${opt}" ${selected.has(opt) ? "checked" : ""}>
      ${opt}
    </label>
  `).join("");
 
- pickWindow.document.write(`
-   <html>
-   <body style="font-family:Arial;padding:16px;">
-     <h3 style="margin-top:0;">Select Gate(s)</h3>
-     ${renderOptions}
-     <div style="margin-top:12px;">
-       <button id="saveBtn">Save</button>
-     </div>
-     <script>
-       document.getElementById("saveBtn").addEventListener("click",function(){
-         const vals=[...document.querySelectorAll('input[type="checkbox"]:checked')]
-           .map(c=>c.value)
-           .join(",");
-         window.opener.receiveGateSelection(vals);
-         window.close();
-       });
-     </script>
-   </body>
-   </html>
- `);
-
- window.receiveGateSelection=function(value){
-   inputEl.value=value;
- };
+ openPopupModal(
+   "Select Gate(s)",
+   renderOptions,
+   function(){
+     const vals=[...document.querySelectorAll(".popup-check-input:checked")]
+       .map(c=>c.value)
+       .join(",");
+     inputEl.value=vals;
+     closePopupModal();
+   }
+ );
 }
 
 // DNF
