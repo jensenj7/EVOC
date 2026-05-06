@@ -244,6 +244,7 @@ function startBackingTimer(){
  if(!pauseBtn) return;
 
  if(!backingRunning){
+   playStopwatchBeep();
    backingRunning=true;
    pauseBtn.innerText="Pause";
 
@@ -262,6 +263,7 @@ function pauseBackingTimer(){
 function toggleBackingPauseResume(){
  const pauseBtn=document.getElementById("backingPauseBtn");
  if(!pauseBtn) return;
+ playStopwatchBeep();
 
  if(backingRunning){
    pauseBackingTimer();
@@ -274,6 +276,7 @@ function toggleBackingPauseResume(){
 function endBackingTimer(){
  const pauseBtn=document.getElementById("backingPauseBtn");
  if(!pauseBtn) return;
+ playStopwatchBeep();
 
  pauseBackingTimer();
  pauseBtn.innerText="Resume";
@@ -311,6 +314,7 @@ function startLollipopTimer(){
  if(!pauseBtn) return;
 
  if(!lollipopRunning){
+   playStopwatchBeep();
    lollipopRunning=true;
    pauseBtn.innerText="Pause";
 
@@ -329,6 +333,7 @@ function pauseLollipopTimer(){
 function toggleLollipopPauseResume(){
  const pauseBtn=document.getElementById("lollipopPauseBtn");
  if(!pauseBtn) return;
+ playStopwatchBeep();
 
  if(lollipopRunning){
    pauseLollipopTimer();
@@ -341,6 +346,7 @@ function toggleLollipopPauseResume(){
 function endLollipopTimer(){
  const pauseBtn=document.getElementById("lollipopPauseBtn");
  if(!pauseBtn) return;
+ playStopwatchBeep();
 
  pauseLollipopTimer();
  pauseBtn.innerText="Resume";
@@ -561,6 +567,17 @@ const aaObservationOptions=[
 "Missed exit gate"
 ];
 
+if(!document.getElementById("roadCourseGateOptions")){
+ const roadCourseGateOptions=document.createElement("datalist");
+ roadCourseGateOptions.id="roadCourseGateOptions";
+ ["G1","G2","G3"].forEach(value=>{
+   const option=document.createElement("option");
+   option.value=value;
+   roadCourseGateOptions.appendChild(option);
+ });
+ document.body.appendChild(roadCourseGateOptions);
+}
+
 coneList.forEach(name=>{
 
  let row=document.createElement("div");
@@ -572,11 +589,16 @@ coneList.forEach(name=>{
  ? `<div class="cone-empty-slot"></div>`
  : `<input type="checkbox" class="cone-checkbox" onchange="evaluate()">`;
 
+ const gateListAttr=
+ ["Skid Pan Turn 1","Skid Pan Turn 2","Skid Pan Turn 3"].includes(name)
+ ? ` list="roadCourseGateOptions"`
+ : "";
+
  row.innerHTML=`
  <div>${name}</div>
  <input type="checkbox" class="cone-checkbox" onchange="evaluate()">
  ${outsideCell}
- <input type="text">
+ <input type="text"${gateListAttr}>
  `;
 
  conesContainer.appendChild(row);
