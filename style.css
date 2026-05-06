@@ -246,6 +246,15 @@ width:100%;
 box-sizing:border-box;
 }
 
+.table-row input.gate-multi-input{
+width:28px;
+height:28px;
+padding:0;
+text-align:center;
+justify-self:center;
+cursor:pointer;
+}
+
 textarea{
 width:100%;
 height:56px;
