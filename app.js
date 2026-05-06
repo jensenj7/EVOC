@@ -70,104 +70,66 @@ function playStopwatchBeep(){
  }
 }
 
-function handleRunTypeSelection(selected){
+
+function enforceSingleSelection(groupName,selected){
  document
- .querySelectorAll('input[name="runType"]')
+ .querySelectorAll(`input[name="${groupName}"]`)
  .forEach(option=>{
    if(option!==selected){
      option.checked=false;
    }
  });
+}
+
+function getSelectedLabel(groupName){
+ const selected=[...document.querySelectorAll(`input[name="${groupName}"]:checked`)];
+
+ if(selected.length!==1){
+   return "";
+ }
+
+ const parent=selected[0].parentElement;
+ return cleanText(parent ? parent.textContent : selected[0].value);
+}
+
+function handleRunTypeSelection(selected){
+ enforceSingleSelection("runType",selected);
 }
 
 function handleAAResultSelection(selected){
- document
- .querySelectorAll('input[name="aaResult"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("aaResult",selected);
 }
 
 function handleBackingObservationSelection(selected){
- document
- .querySelectorAll('input[name="backingObservationMethod"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("backingObservationMethod",selected);
 }
 
 function handleBackingResultSelection(selected){
- document
- .querySelectorAll('input[name="backingResult"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("backingResult",selected);
 }
 
 function handleBrakeTurnBrakingSelection(selected){
- document
- .querySelectorAll('input[name="brakeTurnBraking"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("brakeTurnBraking",selected);
 }
 
 function handleBrakeTurnApexSelection(selected){
- document
- .querySelectorAll('input[name="brakeTurnApex"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("brakeTurnApex",selected);
 }
 
 function handleBrakeTurnResultSelection(selected){
- document
- .querySelectorAll('input[name="brakeTurnResult"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("brakeTurnResult",selected);
 }
 
 function handleLollipopDirectionSelection(selected){
- document
- .querySelectorAll('input[name="lollipopDirection"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("lollipopDirection",selected);
 }
 
 function handleLollipopResultSelection(selected){
- document
- .querySelectorAll('input[name="lollipopResult"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("lollipopResult",selected);
 }
 
 function handleSlalomResultSelection(selected){
- document
- .querySelectorAll('input[name="slalomResult"]')
- .forEach(option=>{
-   if(option!==selected){
-     option.checked=false;
-   }
- });
+ enforceSingleSelection("slalomResult",selected);
 }
 
 function startTimer(){
@@ -283,6 +245,14 @@ function endBackingTimer(){
  updateBackingDisplay();
 }
 
+function clearBackingTimer(){
+ const pauseBtn=document.getElementById("backingPauseBtn");
+ backingSeconds=0;
+ pauseBackingTimer();
+ if(pauseBtn) pauseBtn.innerText="Pause";
+ updateBackingDisplay();
+}
+
 function editBackingTimer(){
  if(backingRunning) return;
 
@@ -350,6 +320,14 @@ function endLollipopTimer(){
 
  pauseLollipopTimer();
  pauseBtn.innerText="Resume";
+ updateLollipopDisplay();
+}
+
+function clearLollipopTimer(){
+ const pauseBtn=document.getElementById("lollipopPauseBtn");
+ lollipopSeconds=0;
+ pauseLollipopTimer();
+ if(pauseBtn) pauseBtn.innerText="Pause";
  updateLollipopDisplay();
 }
 
@@ -483,6 +461,51 @@ function handleSplit(type){
  evaluate();
 }
 
+function openMultiGatePicker(inputEl){
+ if(!inputEl) return;
+ const current=(inputEl.value || "")
+ .split(",")
+ .map(s=>s.trim())
+ .filter(Boolean);
+ const selected=new Set(current);
+ const options=["G1","G2","G3"];
+
+ const pickWindow=window.open("","gatePicker","width=320,height=260");
+ if(!pickWindow) return;
+
+ const renderOptions=options.map(opt=>`
+   <label style="display:block;margin:6px 0;">
+     <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}>
+     ${opt}
+   </label>
+ `).join("");
+
+ pickWindow.document.write(`
+   <html>
+   <body style="font-family:Arial;padding:16px;">
+     <h3 style="margin-top:0;">Select Gate(s)</h3>
+     ${renderOptions}
+     <div style="margin-top:12px;">
+       <button id="saveBtn">Save</button>
+     </div>
+     <script>
+       document.getElementById("saveBtn").addEventListener("click",function(){
+         const vals=[...document.querySelectorAll('input[type="checkbox"]:checked')]
+           .map(c=>c.value)
+           .join(",");
+         window.opener.receiveGateSelection(vals);
+         window.close();
+       });
+     </script>
+   </body>
+   </html>
+ `);
+
+ window.receiveGateSelection=function(value){
+   inputEl.value=value;
+ };
+}
+
 // DNF
 let dnf=false;
 
@@ -591,7 +614,7 @@ coneList.forEach(name=>{
 
  const gateListAttr=
  ["Skid Pan Turn 1","Skid Pan Turn 2","Skid Pan Turn 3"].includes(name)
- ? ` list="roadCourseGateOptions"`
+ ? ` class="gate-multi-input" readonly onclick="openMultiGatePicker(this)"`
  : "";
 
  row.innerHTML=`
@@ -784,10 +807,7 @@ function submitRun(){
  const selectedRunTypes=
  [...document.querySelectorAll('input[name="runType"]:checked')];
 
- const runType=
- selectedRunTypes.length===1
- ? cleanText(selectedRunTypes[0].parentElement.textContent)
- : "";
+ const runType=getSelectedLabel("runType");
 
  const finish=finishTimeValue.innerText;
  const finalTimeSeconds=dnf ? "" : String(parseTimeToSeconds(finish) ?? "");
@@ -823,12 +843,7 @@ function submitAARun(){
  const speedOut=cleanText(document.getElementById("speedOut").value);
  const conesHit=cleanText(buildAAConeHitSummary());
  const instructorObservations=cleanText(buildAAObservationsSummary());
- const selectedResults=
- [...document.querySelectorAll('input[name="aaResult"]:checked')];
- const result=
- selectedResults.length===1
- ? cleanText(selectedResults[0].parentElement.textContent)
- : "";
+ const result=getSelectedLabel("aaResult");
 
  if(!cadet || !speedIn || !direction || !speedOut || !result){
    alert("Missing required AA fields");
@@ -854,19 +869,9 @@ function submitAARun(){
 
 function submitBackingRun(){
  const cadet=cleanText(document.getElementById("backingCadetSelect").value);
- const observationSelections=
- [...document.querySelectorAll('input[name="backingObservationMethod"]:checked')];
- const observationMethod=
- observationSelections.length===1
- ? cleanText(observationSelections[0].parentElement.textContent)
- : "";
+ const observationMethod=getSelectedLabel("backingObservationMethod");
  const conesHit=cleanText(buildBackingConeHitSummary());
- const selectedResults=
- [...document.querySelectorAll('input[name="backingResult"]:checked')];
- const result=
- selectedResults.length===1
- ? cleanText(selectedResults[0].parentElement.textContent)
- : "";
+ const result=getSelectedLabel("backingResult");
  const comments=cleanText(document.getElementById("backingComments").value);
  const finalTime=cleanText(String(backingSeconds));
 
@@ -894,25 +899,10 @@ function submitBackingRun(){
 function submitBrakeTurnRun(){
  const cadet=cleanText(document.getElementById("brakeTurnCadetSelect").value);
  const entrySpeed=cleanText(document.getElementById("brakeTurnEntrySpeed").value);
- const brakingSelections=
- [...document.querySelectorAll('input[name="brakeTurnBraking"]:checked')];
- const braking=
- brakingSelections.length===1
- ? cleanText(brakingSelections[0].parentElement.textContent)
- : "";
- const apexSelections=
- [...document.querySelectorAll('input[name="brakeTurnApex"]:checked')];
- const apex=
- apexSelections.length===1
- ? cleanText(apexSelections[0].parentElement.textContent)
- : "";
+ const braking=getSelectedLabel("brakeTurnBraking");
+ const apex=getSelectedLabel("brakeTurnApex");
  const conesHit=cleanText(buildBrakeTurnConeHitSummary());
- const resultSelections=
- [...document.querySelectorAll('input[name="brakeTurnResult"]:checked')];
- const result=
- resultSelections.length===1
- ? cleanText(resultSelections[0].parentElement.textContent)
- : "";
+ const result=getSelectedLabel("brakeTurnResult");
  const comments=cleanText(document.getElementById("brakeTurnComments").value);
 
  if(!cadet || !entrySpeed || !braking || !apex || !result){
@@ -939,20 +929,10 @@ function submitBrakeTurnRun(){
 
 function submitLollipopRun(){
  const cadet=cleanText(document.getElementById("lollipopCadetSelect").value);
- const directionSelections=
- [...document.querySelectorAll('input[name="lollipopDirection"]:checked')];
- const direction=
- directionSelections.length===1
- ? cleanText(directionSelections[0].parentElement.textContent)
- : "";
+ const direction=getSelectedLabel("lollipopDirection");
  const conesHit=cleanText(buildLollipopConeHitSummary());
  const instructorObservations=cleanText(buildLollipopObservationSummary());
- const resultSelections=
- [...document.querySelectorAll('input[name="lollipopResult"]:checked')];
- const result=
- resultSelections.length===1
- ? cleanText(resultSelections[0].parentElement.textContent)
- : "";
+ const result=getSelectedLabel("lollipopResult");
  const totalTime=cleanText(String(lollipopSeconds));
 
  if(!cadet || !direction || !result){
@@ -982,12 +962,7 @@ function submitSlalomRun(){
  const speedOut=cleanText(document.getElementById("slalomSpeedOut").value);
  const instructorObservations=cleanText(buildSlalomObservationSummary());
  const totalConesHit=cleanText(document.getElementById("slalomTotalConesHit").value);
- const resultSelections=
- [...document.querySelectorAll('input[name="slalomResult"]:checked')];
- const result=
- resultSelections.length===1
- ? cleanText(resultSelections[0].parentElement.textContent)
- : "";
+ const result=getSelectedLabel("slalomResult");
 
  if(!cadet || !speedIn || !speedOut || !result){
    alert("Missing required Slalom fields");
