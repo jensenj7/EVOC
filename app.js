@@ -49,6 +49,26 @@ let backingRunning=false;
 let lollipopSeconds=0;
 let lollipopTimer=null;
 let lollipopRunning=false;
+let audioCtx=null;
+
+function playStopwatchBeep(){
+ try{
+   audioCtx=audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+   const osc=audioCtx.createOscillator();
+   const gain=audioCtx.createGain();
+   osc.type="square";
+   osc.frequency.value=880;
+   gain.gain.setValueAtTime(0.0001,audioCtx.currentTime);
+   gain.gain.exponentialRampToValueAtTime(0.18,audioCtx.currentTime+0.005);
+   gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.09);
+   osc.connect(gain);
+   gain.connect(audioCtx.destination);
+   osc.start();
+   osc.stop(audioCtx.currentTime+0.1);
+ }catch{
+   // no-op if audio is unavailable
+ }
+}
 
 function handleRunTypeSelection(selected){
  document
@@ -151,6 +171,7 @@ function handleSlalomResultSelection(selected){
 }
 
 function startTimer(){
+ playStopwatchBeep();
  if(!running){
    running=true;
    pauseBtn.innerText="Pause";
@@ -169,6 +190,7 @@ function pauseTimer(){
 }
 
 function togglePauseResume(){
+ playStopwatchBeep();
  if(running){
    pauseTimer();
    pauseBtn.innerText="Resume";
@@ -178,6 +200,7 @@ function togglePauseResume(){
 }
 
 function endTimer(){
+ playStopwatchBeep();
  pauseTimer();
  pauseBtn.innerText="Resume";
  finishTimeValue.innerText=format(seconds);
@@ -430,6 +453,7 @@ function handleSplit(type){
  }
 
  if(type==="finish"){
+   playStopwatchBeep();
 
    if(finishTimeValue.innerText==="--:--"){
       pauseTimer();
@@ -543,10 +567,15 @@ coneList.forEach(name=>{
 
  row.className="table-row";
 
+ const outsideCell=
+ name==="Slalom"
+ ? `<div class="cone-empty-slot"></div>`
+ : `<input type="checkbox" class="cone-checkbox" onchange="evaluate()">`;
+
  row.innerHTML=`
  <div>${name}</div>
  <input type="checkbox" class="cone-checkbox" onchange="evaluate()">
- <input type="checkbox" class="cone-checkbox" onchange="evaluate()">
+ ${outsideCell}
  <input type="text">
  `;
 
@@ -598,7 +627,7 @@ function buildConeHitSummary(){
      hits.push(`${name}${gate ? ` ${gate}` : ""} inside`);
    }
 
-   if(outside.checked){
+   if(outside && outside.checked){
      hits.push(`${name}${gate ? ` ${gate}` : ""} outside`);
    }
  });
