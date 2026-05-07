@@ -569,7 +569,7 @@ function format(sec){
 
 // CONES
 const coneList=[
-"Diminishing Lane","Entry Skid Pan","Skid Pan Turn 1 Entry",
+"Diminishing Lane","Entry Skid Pan","Skid Pan Approach Turn 1",
 "Skid Pan Turn 1","Skid Pan Turn 2","Skid Pan Turn 3",
 "Exit Skid Pan","Middle Intersection","South Intersection",
 "Slalom","Northeast Straight","Northeast Turn",
