@@ -231,30 +231,30 @@ text-shadow:0 1px 0 rgba(0,0,0,.25);
 
 .table-row input[type="checkbox"]{
 justify-self:center;
-width:24px;
-height:24px;
+width:20px;
+height:20px;
 margin:0;
 }
 
 .cone-empty-slot{
-width:24px;
-height:24px;
+width:20px;
+height:20px;
 justify-self:center;
 }
 
 .table-row input[type="text"]{
 width:100%;
 box-sizing:border-box;
-height:24px;
+height:20px;
 margin:0;
 padding:0 6px;
-line-height:24px;
+line-height:20px;
 border-radius:2px;
 }
 
 .table-row input.gate-multi-input{
 width:100%;
-height:24px;
+height:20px;
 padding:0 6px;
 text-align:left;
 cursor:pointer;
@@ -588,4 +588,160 @@ color:#eef3ff;
 background:linear-gradient(180deg,#3b4c75 0%,#2f3d5f 100%);
 border:1px solid rgba(126,154,222,.4);
 border-radius:14px;
+}
+
+.status-display{
+font-size:24px;
+font-weight:bold;
+min-width:220px;
+}
+
+.sync-status{
+font-size:14px;
+color:#b8c4df;
+text-align:center;
+flex:1;
+}
+
+.qual{
+color:lime;
+}
+
+.nonqual{
+color:red;
+}
+
+/* DNF BUTTON */
+#dnfBtn.dnf-active{
+background:red;
+}
+
+@media (max-width: 768px){
+.app-container{
+max-width:100%;
+overflow-x:hidden;
+}
+
+.top-bar{
+align-items:flex-start;
+}
+
+.middle-row{
+flex-direction:column;
+}
+
+.table-header,.table-row{
+grid-template-columns:minmax(130px,1fr) 42px 42px 86px;
+gap:4px;
+}
+
+.table-header div{
+font-size:12px;
+}
+
+.table-row{
+font-size:16px;
+}
+
+.table-row input[type="text"]{
+padding:4px;
+}
+
+.timer-btn{
+font-size:16px;
+padding:7px 0;
+border-radius:14px;
+}
+
+.left-panel div{
+font-size:16px;
+}
+
+#timerDisplay{
+font-size:60px;
+}
+
+.submit-btn{
+font-size:16px;
+padding:7px 14px;
+}
+
+.sync-status{
+font-size:12px;
+}
+
+.aa-title{
+font-size:24px;
+}
+
+.aa-grid{
+grid-template-columns:1fr;
+}
+
+.two-field-grid{
+grid-template-columns:1fr;
+}
+
+.single-field-grid{
+grid-template-columns:1fr;
+}
+
+.backing-timer-row{
+flex-direction:column;
+}
+
+.backing-button-column{
+width:100%;
+}
+
+#backingTimerDisplay{
+font-size:64px;
+}
+
+#lollipopTimerDisplay{
+font-size:64px;
+}
+
+.aa-table-header,.aa-table-row{
+grid-template-columns:minmax(130px,1fr) 56px 56px;
+}
+
+.brake-turn-cones-header,.brake-turn-cone-row{
+grid-template-columns:minmax(120px,1fr) 50px 50px 70px;
+gap:6px;
+}
+
+.aa-table-row{
+font-size:16px;
+}
+
+.observations-grid{
+grid-template-columns:1fr;
+gap:8px;
+}
+
+.aa-info{
+padding:10px 12px;
+}
+
+.aa-info h3{
+font-size:16px;
+}
+
+textarea{
+height:86px;
+}
+}
+
+@media (min-width: 769px){
+.table-header{
+width:max-content;
+margin:0 auto;
+}
+
+#conesContainer{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
 }
