@@ -83,7 +83,6 @@ function playStopwatchBeep(){
  }
 }
 
-
 function enforceSingleSelection(groupName,selected){
  document
  .querySelectorAll(`input[name="${groupName}"]`)
@@ -105,49 +104,17 @@ function getSelectedLabel(groupName){
  return cleanText(parent ? parent.textContent : selected[0].value);
 }
 
-function handleRunTypeSelection(selected){
- enforceSingleSelection("runType",selected);
-}
-
-function handleAAResultSelection(selected){
- enforceSingleSelection("aaResult",selected);
-}
-
-function handleAADirectionSelection(selected){
- enforceSingleSelection("aaDirection",selected);
-}
-
-function handleBackingObservationSelection(selected){
- enforceSingleSelection("backingObservationMethod",selected);
-}
-
-function handleBackingResultSelection(selected){
- enforceSingleSelection("backingResult",selected);
-}
-
-function handleBrakeTurnBrakingSelection(selected){
- enforceSingleSelection("brakeTurnBraking",selected);
-}
-
-function handleBrakeTurnApexSelection(selected){
- enforceSingleSelection("brakeTurnApex",selected);
-}
-
-function handleBrakeTurnResultSelection(selected){
- enforceSingleSelection("brakeTurnResult",selected);
-}
-
-function handleLollipopDirectionSelection(selected){
- enforceSingleSelection("lollipopDirection",selected);
-}
-
-function handleLollipopResultSelection(selected){
- enforceSingleSelection("lollipopResult",selected);
-}
-
-function handleSlalomResultSelection(selected){
- enforceSingleSelection("slalomResult",selected);
-}
+function handleRunTypeSelection(selected){ enforceSingleSelection("runType",selected); }
+function handleAAResultSelection(selected){ enforceSingleSelection("aaResult",selected); }
+function handleAADirectionSelection(selected){ enforceSingleSelection("aaDirection",selected); }
+function handleBackingObservationSelection(selected){ enforceSingleSelection("backingObservationMethod",selected); }
+function handleBackingResultSelection(selected){ enforceSingleSelection("backingResult",selected); }
+function handleBrakeTurnBrakingSelection(selected){ enforceSingleSelection("brakeTurnBraking",selected); }
+function handleBrakeTurnApexSelection(selected){ enforceSingleSelection("brakeTurnApex",selected); }
+function handleBrakeTurnResultSelection(selected){ enforceSingleSelection("brakeTurnResult",selected); }
+function handleLollipopDirectionSelection(selected){ enforceSingleSelection("lollipopDirection",selected); }
+function handleLollipopResultSelection(selected){ enforceSingleSelection("lollipopResult",selected); }
+function handleSlalomResultSelection(selected){ enforceSingleSelection("slalomResult",selected); }
 
 function startTimer(){
  playStopwatchBeep();
@@ -155,29 +122,19 @@ function startTimer(){
    running=true;
    startTimestamp=Date.now()-(seconds*1000);
    pauseBtn.innerText="Pause";
-
    timer=setInterval(()=>{
       seconds=Math.floor((Date.now()-startTimestamp)/1000);
       updateDisplay();
-      evaluate(); // live qualification evaluation
+      evaluate();
    },250);
  }
 }
-
-function pauseTimer(){
- clearInterval(timer);
- startTimestamp=null;
- running=false;
-}
+function pauseTimer(){ clearInterval(timer); startTimestamp=null; running=false; }
 
 function togglePauseResume(){
  playStopwatchBeep();
- if(running){
-   pauseTimer();
-   pauseBtn.innerText="Resume";
- }else{
-   startTimer();
- }
+ if(running){ pauseTimer(); pauseBtn.innerText="Resume"; }
+ else{ startTimer(); }
 }
 
 function endTimer(){
@@ -191,7 +148,6 @@ function endTimer(){
 function updateDisplay(){
  let m=String(Math.floor(seconds/60)).padStart(2,'0');
  let s=String(seconds%60).padStart(2,'0');
-
  timerDisplay.innerText=`${m}:${s}`;
 }
 
@@ -206,61 +162,43 @@ function updateBackingDisplay(){
 function parseTimeToSeconds(value){
  const input=cleanText(value);
  if(!input) return null;
-
- if(/^\d+$/.test(input)){
-   return Number(input);
- }
-
+ if(/^\d+$/.test(input)) return Number(input);
  if(/^\d{1,2}:\d{2}$/.test(input)){
    const [m,s]=input.split(":").map(Number);
    if(s>=60) return null;
    return (m*60)+s;
  }
-
  return null;
 }
 
 function startBackingTimer(){
  const pauseBtn=document.getElementById("backingPauseBtn");
  if(!pauseBtn) return;
-
  if(!backingRunning){
    playStopwatchBeep();
    backingRunning=true;
    backingStartTimestamp=Date.now()-(backingSeconds*1000);
    pauseBtn.innerText="Pause";
-
    backingTimer=setInterval(()=>{
      backingSeconds=Math.floor((Date.now()-backingStartTimestamp)/1000);
      updateBackingDisplay();
    },250);
  }
 }
-
-function pauseBackingTimer(){
- clearInterval(backingTimer);
- backingStartTimestamp=null;
- backingRunning=false;
-}
+function pauseBackingTimer(){ clearInterval(backingTimer); backingStartTimestamp=null; backingRunning=false; }
 
 function toggleBackingPauseResume(){
  const pauseBtn=document.getElementById("backingPauseBtn");
  if(!pauseBtn) return;
  playStopwatchBeep();
-
- if(backingRunning){
-   pauseBackingTimer();
-   pauseBtn.innerText="Resume";
- }else{
-   startBackingTimer();
- }
+ if(backingRunning){ pauseBackingTimer(); pauseBtn.innerText="Resume"; }
+ else{ startBackingTimer(); }
 }
 
 function endBackingTimer(){
  const pauseBtn=document.getElementById("backingPauseBtn");
  if(!pauseBtn) return;
  playStopwatchBeep();
-
  pauseBackingTimer();
  pauseBtn.innerText="Resume";
  updateBackingDisplay();
@@ -276,20 +214,12 @@ function clearBackingTimer(){
 
 function editBackingTimer(){
  if(backingRunning) return;
-
- editSplit(
-   format(backingSeconds),
-   "Edit Backing Time (mm:ss or seconds)",
-   function(val){
-     const parsed=parseTimeToSeconds(val);
-     if(parsed===null){
-       alert("Invalid time format. Use mm:ss or seconds.");
-       return;
-     }
-     backingSeconds=parsed;
-     updateBackingDisplay();
-   }
- );
+ editSplit(format(backingSeconds),"Edit Backing Time (mm:ss or seconds)",function(val){
+   const parsed=parseTimeToSeconds(val);
+   if(parsed===null){ alert("Invalid time format. Use mm:ss or seconds."); return; }
+   backingSeconds=parsed;
+   updateBackingDisplay();
+ });
 }
 
 function updateLollipopDisplay(){
@@ -303,44 +233,31 @@ function updateLollipopDisplay(){
 function startLollipopTimer(){
  const pauseBtn=document.getElementById("lollipopPauseBtn");
  if(!pauseBtn) return;
-
  if(!lollipopRunning){
    playStopwatchBeep();
    lollipopRunning=true;
    lollipopStartTimestamp=Date.now()-(lollipopSeconds*1000);
    pauseBtn.innerText="Pause";
-
    lollipopTimer=setInterval(()=>{
      lollipopSeconds=Math.floor((Date.now()-lollipopStartTimestamp)/1000);
      updateLollipopDisplay();
    },250);
  }
 }
-
-function pauseLollipopTimer(){
- clearInterval(lollipopTimer);
- lollipopStartTimestamp=null;
- lollipopRunning=false;
-}
+function pauseLollipopTimer(){ clearInterval(lollipopTimer); lollipopStartTimestamp=null; lollipopRunning=false; }
 
 function toggleLollipopPauseResume(){
  const pauseBtn=document.getElementById("lollipopPauseBtn");
  if(!pauseBtn) return;
  playStopwatchBeep();
-
- if(lollipopRunning){
-   pauseLollipopTimer();
-   pauseBtn.innerText="Resume";
- }else{
-   startLollipopTimer();
- }
+ if(lollipopRunning){ pauseLollipopTimer(); pauseBtn.innerText="Resume"; }
+ else{ startLollipopTimer(); }
 }
 
 function endLollipopTimer(){
  const pauseBtn=document.getElementById("lollipopPauseBtn");
  if(!pauseBtn) return;
  playStopwatchBeep();
-
  pauseLollipopTimer();
  pauseBtn.innerText="Resume";
  updateLollipopDisplay();
@@ -356,27 +273,18 @@ function clearLollipopTimer(){
 
 function editLollipopTimer(){
  if(lollipopRunning) return;
-
- editSplit(
-   format(lollipopSeconds),
-   "Edit Lollipop Time (mm:ss or seconds)",
-   function(val){
-     const parsed=parseTimeToSeconds(val);
-     if(parsed===null){
-       alert("Invalid time format. Use mm:ss or seconds.");
-       return;
-     }
-     lollipopSeconds=parsed;
-     updateLollipopDisplay();
-   }
- );
+ editSplit(format(lollipopSeconds),"Edit Lollipop Time (mm:ss or seconds)",function(val){
+   const parsed=parseTimeToSeconds(val);
+   if(parsed===null){ alert("Invalid time format. Use mm:ss or seconds."); return; }
+   lollipopSeconds=parsed;
+   updateLollipopDisplay();
+ });
 }
 
 // SPLITS
 let skidTime=null;
 let northTime=null;
 
-/* NON-BLOCKING EDITOR */
 function closePopupModal(){
  const modal=document.getElementById("popupModal");
  if(modal) modal.remove();
@@ -384,11 +292,9 @@ function closePopupModal(){
 
 function openPopupModal(title,bodyHtml,onSave){
  closePopupModal();
-
  const modal=document.createElement("div");
  modal.id="popupModal";
  modal.className="popup-modal";
-
  modal.innerHTML=`
    <div class="popup-modal-card">
      <h3>${title}</h3>
@@ -399,17 +305,11 @@ function openPopupModal(title,bodyHtml,onSave){
      </div>
    </div>
  `;
-
  document.body.appendChild(modal);
-
  const cancelBtn=document.getElementById("popupCancelBtn");
  const saveBtn=document.getElementById("popupSaveBtn");
  if(cancelBtn) cancelBtn.addEventListener("click",closePopupModal);
- if(saveBtn){
-   saveBtn.addEventListener("click",function(){
-     if(onSave) onSave();
-   });
- }
+ if(saveBtn) saveBtn.addEventListener("click",function(){ if(onSave) onSave(); });
 }
 
 function editSplit(currentValue,title,callback){
@@ -426,68 +326,33 @@ function editSplit(currentValue,title,callback){
 }
 
 function handleSplit(type){
-
  if(type==="skid"){
-
-   if(!skidTime){
-      skidTime=format(seconds);
-      skidBtn.innerText=skidTime;
-   }else{
-
-      editSplit(
-        skidTime,
-        "Edit Skid Exit Time",
-        function(val){
-          if(val){
-            skidTime=val;
-            skidBtn.innerText=val;
-            evaluate();
-          }
-        }
-      );
+   if(!skidTime){ skidTime=format(seconds); skidBtn.innerText=skidTime; }
+   else{
+      editSplit(skidTime,"Edit Skid Exit Time",function(val){
+        if(val){ skidTime=val; skidBtn.innerText=val; evaluate(); }
+      });
    }
  }
 
  if(type==="north"){
-
-   if(!northTime){
-      northTime=format(seconds);
-      northBtn.innerText=northTime;
-   }else{
-
-      editSplit(
-        northTime,
-        "Edit North Intersection",
-        function(val){
-          if(val){
-            northTime=val;
-            northBtn.innerText=val;
-            evaluate();
-          }
-        }
-      );
+   if(!northTime){ northTime=format(seconds); northBtn.innerText=northTime; }
+   else{
+      editSplit(northTime,"Edit North Intersection",function(val){
+        if(val){ northTime=val; northBtn.innerText=val; evaluate(); }
+      });
    }
  }
 
  if(type==="finish"){
    playStopwatchBeep();
-
    if(finishTimeValue.innerText==="--:--"){
       pauseTimer();
       finishTimeValue.innerText=format(seconds);
-
    }else{
-
-      editSplit(
-        finishTimeValue.innerText,
-        "Edit Finish Time",
-        function(val){
-          if(val){
-            finishTimeValue.innerText=val;
-            evaluate();
-          }
-        }
-      );
+      editSplit(finishTimeValue.innerText,"Edit Finish Time",function(val){
+          if(val){ finishTimeValue.innerText=val; evaluate(); }
+      });
    }
  }
 
@@ -496,10 +361,7 @@ function handleSplit(type){
 
 function openMultiGatePicker(inputEl){
  if(!inputEl) return;
- const current=(inputEl.value || "")
- .split(",")
- .map(s=>s.trim())
- .filter(Boolean);
+ const current=(inputEl.value || "").split(",").map(s=>s.trim()).filter(Boolean);
  const selected=new Set(current);
  const options=["G1","G2","G3"];
 
@@ -510,30 +372,16 @@ function openMultiGatePicker(inputEl){
    </label>
  `).join("");
 
- openPopupModal(
-   "Select Gate(s)",
-   renderOptions,
-   function(){
-     const vals=[...document.querySelectorAll(".popup-check-input:checked")]
-       .map(c=>c.value)
-       .join(",");
-     inputEl.value=vals;
-     closePopupModal();
-   }
- );
+ openPopupModal("Select Gate(s)",renderOptions,function(){
+   const vals=[...document.querySelectorAll(".popup-check-input:checked")].map(c=>c.value).join(",");
+   inputEl.value=vals;
+   closePopupModal();
+ });
 }
 
 // DNF
 let dnf=false;
-
-function toggleDNF(){
-
- dnf=!dnf;
-
- dnfBtn.classList.toggle("dnf-active");
-
- evaluate();
-}
+function toggleDNF(){ dnf=!dnf; dnfBtn.classList.toggle("dnf-active"); evaluate(); }
 
 // STATUS
 function evaluate(){
@@ -550,35 +398,27 @@ function evaluate(){
  ...document.querySelectorAll('#conesContainer input[type="checkbox"]')
  ];
 
- let anyChecked=
- coneChecks.some(c=>c.checked);
-
+ let anyChecked=coneChecks.some(c=>c.checked);
  let finish;
 
  if(finishTimeValue.innerText==="--:--"){
-    finish=seconds; // use live running timer
+    finish=seconds;
  }else{
     let [m,s]=finishTimeValue.innerText.split(":").map(Number);
     finish=m*60+s;
  }
 
  if(anyChecked || finish>145){
-
     statusEl.innerText="Non-Qualifying";
     statusEl.className="status-display nonqual";
-
  }else{
-
     statusEl.innerText="Qualifying";
     statusEl.className="status-display qual";
  }
 }
 
-// FORMAT
 function format(sec){
-
  return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
-
 }
 
 // CONES
@@ -592,9 +432,7 @@ const coneList=[
 "Serpentine","Lane Change Gate 1","Lane Change Gate 2","Lane Change Gate 3"
 ];
 
-const aaConeLocations=[
-"Entry","Lane Change","Exit"
-];
+const aaConeLocations=["Entry","Lane Change","Exit"];
 
 const aaObservationOptions=[
 "Entry speed too slow",
@@ -619,9 +457,7 @@ if(!document.getElementById("roadCourseGateOptions")){
 }
 
 coneList.forEach(name=>{
-
  let row=document.createElement("div");
-
  row.className="table-row";
 
  const outsideCell=
@@ -640,141 +476,101 @@ coneList.forEach(name=>{
  ${outsideCell}
  <input type="text"${gateListAttr}>
  `;
-
  conesContainer.appendChild(row);
-
 });
 
 aaConeLocations.forEach(name=>{
  let row=document.createElement("div");
  row.className="aa-table-row";
-
  row.innerHTML=`
  <div>${name}</div>
  <input type="checkbox" class="aa-cone-checkbox" data-location="${name}" data-side="inside">
  <input type="checkbox" class="aa-cone-checkbox" data-location="${name}" data-side="outside">
  `;
-
  aaConesContainer.appendChild(row);
 });
 
 aaObservationOptions.forEach(text=>{
  const option=document.createElement("label");
-
  option.innerHTML=`
  <input type="checkbox" class="aa-observation-checkbox" value="${text}">
  ${text}
  `;
-
  observationsGrid.appendChild(option);
 });
 
 conesContainer.addEventListener("change",function(e){
- if(e.target.matches('input[type="checkbox"]')){
-   evaluate();
- }
+ if(e.target.matches('input[type="checkbox"]')) evaluate();
 });
 
 function buildConeHitSummary(){
  const hits=[];
  const rows=[...document.querySelectorAll("#conesContainer .table-row")];
-
  rows.forEach(row=>{
    const name=row.querySelector("div").innerText.trim();
    const inside=row.children[1];
    const outside=row.children[2];
    const gate=(row.children[3].value || "").trim();
-
-   if(inside.checked){
-     hits.push(`${name}${gate ? ` ${gate}` : ""} inside`);
-   }
-
-   if(outside && outside.checked){
-     hits.push(`${name}${gate ? ` ${gate}` : ""} outside`);
-   }
+   if(inside.checked) hits.push(`${name}${gate ? ` ${gate}` : ""} inside`);
+   if(outside && outside.checked) hits.push(`${name}${gate ? ` ${gate}` : ""} outside`);
  });
-
  return hits.join(", ");
 }
 
-function splitOrBlank(value,defaultLabel){
- return value===defaultLabel ? "" : value;
-}
+function splitOrBlank(value,defaultLabel){ return value===defaultLabel ? "" : value; }
 
 function formatSkidTimeForSheet(value){
  const cleaned=cleanText(value);
  if(!cleaned) return "";
  const parsed=parseTimeToSeconds(cleaned);
  if(parsed===null) return cleaned;
-
- if(parsed<60){
-   return `:${String(parsed).padStart(2,"0")}`;
- }
-
+ if(parsed<60) return `:${String(parsed).padStart(2,"0")}`;
  return format(parsed);
 }
 
 function cleanText(value){
- return String(value || "")
- .replace(/\s+/g," ")
- .trim();
+ return String(value || "").replace(/\s+/g," ").trim();
 }
 
 function buildAAConeHitSummary(){
  const hits=[];
-
  document.querySelectorAll(".aa-cone-checkbox").forEach(input=>{
    if(!input.checked) return;
    const location=input.dataset.location || "";
    const side=input.dataset.side || "";
    hits.push(`${location} ${side}`);
  });
-
  return hits.join(", ");
 }
 
 function buildAAObservationsSummary(){
- const selections=
- [...document.querySelectorAll(".aa-observation-checkbox:checked")]
+ return [...document.querySelectorAll(".aa-observation-checkbox:checked")]
  .map(input=>input.value.trim())
- .filter(Boolean);
-
- return selections.join(", ");
+ .filter(Boolean)
+ .join(", ");
 }
 
 function buildBackingConeHitSummary(){
- const hits=
- [...document.querySelectorAll(".backing-cone-checkbox:checked")]
+ return [...document.querySelectorAll(".backing-cone-checkbox:checked")]
  .map(input=>input.value.trim())
- .filter(Boolean);
-
- return hits.join(", ");
+ .filter(Boolean)
+ .join(", ");
 }
 
 function buildBrakeTurnConeHitSummary(){
  const hits=[];
  const rows=[...document.querySelectorAll(".brake-turn-cone-row")];
-
  rows.forEach(row=>{
    const location=row.children[0].innerText.trim();
    const inside=row.children[1];
    const outside=row.children[2];
    const count=(row.children[3].value || "").trim();
-
-   if(inside.checked){
-     hits.push(`${location}${count ? ` ${count}` : ""} inside`);
-   }
-
-   if(outside.checked){
-     hits.push(`${location}${count ? ` ${count}` : ""} outside`);
-   }
+   if(inside.checked) hits.push(`${location}${count ? ` ${count}` : ""} inside`);
+   if(outside.checked) hits.push(`${location}${count ? ` ${count}` : ""} outside`);
  });
 
  const offCourse=document.getElementById("brakeTurnOffCourse");
- if(offCourse && offCourse.checked){
-   hits.push("Off Course");
- }
-
+ if(offCourse && offCourse.checked) hits.push("Off Course");
  return hits.join(", ");
 }
 
@@ -787,45 +583,30 @@ function buildLollipopConeHitSummary(){
  const circleCount=cleanText(circleCountInput ? circleCountInput.value : "");
  const slalomCount=cleanText(slalomCountInput ? slalomCountInput.value : "");
 
- if(circle && circle.checked){
-   hits.push(`Circle${circleCount ? ` ${circleCount}` : ""}`);
- }
-
- if(slalom && slalom.checked){
-   hits.push(`Slalom${slalomCount ? ` ${slalomCount}` : ""}`);
- }
-
+ if(circle && circle.checked) hits.push(`Circle${circleCount ? ` ${circleCount}` : ""}`);
+ if(slalom && slalom.checked) hits.push(`Slalom${slalomCount ? ` ${slalomCount}` : ""}`);
  return hits.join(", ");
 }
 
 function buildLollipopObservationSummary(){
- const selections=
- [...document.querySelectorAll(".lollipop-observation-checkbox:checked")]
+ return [...document.querySelectorAll(".lollipop-observation-checkbox:checked")]
  .map(input=>input.value.trim())
- .filter(Boolean);
-
- return selections.join(", ");
+ .filter(Boolean)
+ .join(", ");
 }
 
 function buildSlalomObservationSummary(){
- const selections=
- [...document.querySelectorAll(".slalom-observation-checkbox:checked")]
+ return [...document.querySelectorAll(".slalom-observation-checkbox:checked")]
  .map(input=>input.value.trim())
- .filter(Boolean);
-
- return selections.join(", ");
+ .filter(Boolean)
+ .join(", ");
 }
 
 // SUBMIT
 function submitRun(){
-
  const cadet=cleanText(cadetSelect.value);
-
- const selectedRunTypes=
- [...document.querySelectorAll('input[name="runType"]:checked')];
-
+ const selectedRunTypes=[...document.querySelectorAll('input[name="runType"]:checked')];
  const runType=getSelectedLabel("runType");
-
  const finish=finishTimeValue.innerText;
  const finalTimeSeconds=dnf ? "" : String(parseTimeToSeconds(finish) ?? "");
 
@@ -849,14 +630,13 @@ function submitRun(){
 
  queueRun(payload);
  flushQueuedRuns();
-
  clearAll();
 }
 
 function submitAARun(){
  const cadet=cleanText(document.getElementById("aaCadetSelect").value);
  const speedIn=cleanText(document.getElementById("speedIn").value);
- const direction=getSelectedLabel("aaDirection");
+ const direction=getSelectedLabel("aaDirection") || cleanText((document.getElementById("directionSelect") || {}).value);
  const speedOut=cleanText(document.getElementById("speedOut").value);
  const conesHit=cleanText(buildAAConeHitSummary());
  const instructorObservations=cleanText(buildAAObservationsSummary());
@@ -867,18 +647,7 @@ function submitAARun(){
    return;
  }
 
- const payload={
-   sheet:"AA",
-   timestamp:new Date().toISOString(),
-   cadet,
-   speedIn,
-   direction,
-   speedOut,
-   conesHit,
-   instructorObservations,
-   result
- };
-
+ const payload={ sheet:"AA", timestamp:new Date().toISOString(), cadet, speedIn, direction, speedOut, conesHit, instructorObservations, result };
  queueRun(payload);
  flushQueuedRuns();
  clearAAForm();
@@ -900,12 +669,8 @@ function submitBackingRun(){
  const payload={
    sheet:"Backing",
    timestamp:new Date().toISOString(),
-   cadet,
-   observationMethod,
-   conesHit,
-   totalTime:finalTime,
-   result,
-   instructorComments:comments
+   cadet, observationMethod, conesHit,
+   totalTime:finalTime, result, instructorComments:comments
  };
 
  queueRun(payload);
@@ -927,18 +692,7 @@ function submitBrakeTurnRun(){
    return;
  }
 
- const payload={
-   sheet:"B&T",
-   timestamp:new Date().toISOString(),
-   cadet,
-   entrySpeed,
-   braking,
-   apex,
-   conesHit,
-   result,
-   instructorComments:comments
- };
-
+ const payload={ sheet:"B&T", timestamp:new Date().toISOString(), cadet, entrySpeed, braking, apex, conesHit, result, instructorComments:comments };
  queueRun(payload);
  flushQueuedRuns();
  clearBrakeTurnForm();
@@ -957,17 +711,7 @@ function submitLollipopRun(){
    return;
  }
 
- const payload={
-   sheet:"Lollipop",
-   timestamp:new Date().toISOString(),
-   cadet,
-   direction,
-   conesHit,
-   instructorObservations,
-   totalTime,
-   result
- };
-
+ const payload={ sheet:"Lollipop", timestamp:new Date().toISOString(), cadet, direction, conesHit, instructorObservations, totalTime, result };
  queueRun(payload);
  flushQueuedRuns();
  clearLollipopForm();
@@ -986,17 +730,7 @@ function submitSlalomRun(){
    return;
  }
 
- const payload={
-   sheet:"Slalom",
-   timestamp:new Date().toISOString(),
-   cadet,
-   speedIn,
-   speedOut,
-   instructorObservations,
-   totalConesHit,
-   result
- };
-
+ const payload={ sheet:"Slalom", timestamp:new Date().toISOString(), cadet, speedIn, speedOut, instructorObservations, totalConesHit, result };
  queueRun(payload);
  flushQueuedRuns();
  clearSlalomForm();
@@ -1004,41 +738,23 @@ function submitSlalomRun(){
 
 // CLEAR
 function clearAll(){
-
  seconds=0;
-
  updateDisplay();
-
  pauseTimer();
  pauseBtn.innerText="Pause";
-
  skidTime=null;
  northTime=null;
-
  skidBtn.innerText="Skid Exit";
  northBtn.innerText="North Intersection";
-
  finishTimeValue.innerText="--:--";
-
  dnf=false;
-
  dnfBtn.classList.remove("dnf-active");
 
- document.querySelectorAll(
- '#roadCoursePage input[type=checkbox]'
- ).forEach(c=>c.checked=false);
-
- document.querySelectorAll(
- '#roadCoursePage input[type=text]'
- ).forEach(t=>t.value="");
-
- document.getElementById(
- "comments"
- ).value="";
-
+ document.querySelectorAll('#roadCoursePage input[type=checkbox]').forEach(c=>c.checked=false);
+ document.querySelectorAll('#roadCoursePage input[type=text]').forEach(t=>t.value="");
+ document.getElementById("comments").value="";
  cadetSelect.selectedIndex=0;
-
-evaluate();
+ evaluate();
 }
 
 function clearAAForm(){
@@ -1047,6 +763,8 @@ function clearAAForm(){
  document.getElementById("speedOut").value="";
 
  document.querySelectorAll('input[name="aaDirection"]').forEach(c=>c.checked=false);
+ const directionSelect=document.getElementById("directionSelect");
+ if(directionSelect) directionSelect.selectedIndex=0;
  document.querySelectorAll(".aa-cone-checkbox").forEach(c=>c.checked=false);
  document.querySelectorAll(".aa-observation-checkbox").forEach(c=>c.checked=false);
  document.querySelectorAll('input[name="aaResult"]').forEach(c=>c.checked=false);
@@ -1121,11 +839,8 @@ updateBackingDisplay();
 updateLollipopDisplay();
 
 function getQueuedRuns(){
- try{
-   return JSON.parse(localStorage.getItem(RUN_QUEUE_KEY) || "[]");
- }catch{
-   return [];
- }
+ try{ return JSON.parse(localStorage.getItem(RUN_QUEUE_KEY) || "[]"); }
+ catch{ return []; }
 }
 
 function setQueuedRuns(queue){
@@ -1173,40 +888,28 @@ function updateSyncStatus(){
 
 function queueRun(payload){
  const queue=getQueuedRuns();
- queue.push({
-   payload,
-   queuedAt:new Date().toISOString()
- });
+ queue.push({ payload, queuedAt:new Date().toISOString() });
  setQueuedRuns(queue);
 }
 
 async function postRun(payload){
  return fetch(
  "https://script.google.com/macros/s/AKfycbyl-NSENy93Qt6uIBSlDC6R3J7w6QCaKRq3sUnLNhM3SiJ9EeGuXR7ONxg9R4qUUMqx/exec",
- {
-   method:"POST",
-   mode:"no-cors",
-   body:JSON.stringify(payload)
- });
+ { method:"POST", mode:"no-cors", body:JSON.stringify(payload) }
+ );
 }
 
 let syncing=false;
 
 async function flushQueuedRuns(){
  if(syncing) return;
- if(!navigator.onLine){
-   updateSyncStatus();
-   return;
- }
+ if(!navigator.onLine){ updateSyncStatus(); return; }
 
  syncing=true;
-
  try{
    let queue=getQueuedRuns();
-
    while(queue.length){
      const run=queue[0];
-
      try{
        await postRun(run.payload);
        queue.shift();
@@ -1223,12 +926,8 @@ async function flushQueuedRuns(){
 
 // ROSTER
 async function loadRoster(){
-
- const url=
- "https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
-
+ const url="https://opensheet.elk.sh/14_VNcxzwP7niT9nJcG1vYVlmR4-_gETqimt-yx0JvfM/Roster";
  let res=await fetch(url);
-
  let data=await res.json();
 
  const cadetSelectEl=document.getElementById("cadetSelect");
@@ -1239,18 +938,11 @@ async function loadRoster(){
  const slalomCadetSelectEl=document.getElementById("slalomCadetSelect");
 
  [cadetSelectEl,aaCadetSelectEl,backingCadetSelectEl,brakeTurnCadetSelectEl,lollipopCadetSelectEl,slalomCadetSelectEl]
- .forEach(select=>{
-   if(select) select.innerHTML="<option>Select Cadet</option>";
- });
+ .forEach(select=>{ if(select) select.innerHTML="<option>Select Cadet</option>"; });
 
  data.forEach(r=>{
-
-   let name=
-   r.Name || Object.values(r)[0];
-
-   let opt=
-   document.createElement("option");
-
+   let name=r.Name || Object.values(r)[0];
+   let opt=document.createElement("option");
    opt.text=name;
 
    if(cadetSelectEl) cadetSelectEl.add(opt);
@@ -1259,9 +951,7 @@ async function loadRoster(){
    if(brakeTurnCadetSelectEl) brakeTurnCadetSelectEl.add(opt.cloneNode(true));
    if(lollipopCadetSelectEl) lollipopCadetSelectEl.add(opt.cloneNode(true));
    if(slalomCadetSelectEl) slalomCadetSelectEl.add(opt.cloneNode(true));
-
  });
-
 }
 
 window.addEventListener("online",flushQueuedRuns);
