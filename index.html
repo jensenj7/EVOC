@@ -230,10 +230,25 @@
       <div class="sync-status" id="backingSyncStatus">All runs synced</div>
       <button class="submit-btn" onclick="submitBackingRun()">Submit</button>
     </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs.</p>
+      <p>Students will chose between look back and mirror methods before placing the vehicle in reverse and complete the course with hitting any cones with 39 seconds.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Learn to control a vehicle while traveling backwards.</li>
+        <li>Understand vehicle dynamics (caster effect) in backing up.</li>
+        <li>Understand limitations of view while backing.</li>
+        <li>Understand why backing is one of the three maneuvers that police officers are more likely to become involved in a crash.</li>
+        <li>Understand that slower speeds are better when in reverse.</li>
+      </ul>
+    </div>
   </div>
 
   <div id="brakeTurnPage" class="course-page">
-    <h2 class="aa-title">Brake/Turn</h2>
+    <h2 class="aa-title">Brake, then Turn</h2>
 
     <div class="top-bar">
       <div class="cadet-block">
@@ -242,25 +257,28 @@
       </div>
     </div>
 
+    <div class="aa-subheading">Entry Speed</div>
     <div class="aa-grid single-field-grid">
       <div class="aa-field">
-        <label for="brakeTurnEntrySpeed">Entry Speed</label>
         <input type="text" id="brakeTurnEntrySpeed" inputmode="numeric" placeholder="mph">
       </div>
     </div>
 
     <div class="aa-subheading">Braking</div>
     <div class="results-block">
-      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Good</label>
-      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Early</label>
-      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Late</label>
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Appropriate</label>
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Too early</label>
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Too long</label>
+      <label><input type="checkbox" name="brakeTurnBraking" onchange="handleBrakeTurnBrakingSelection(this)"> Not enough brake</label>
     </div>
 
     <div class="aa-subheading">Apex</div>
     <div class="results-block">
-      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Good</label>
-      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Too Deep</label>
-      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Too Shallow</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> No apex</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Early apex</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> True apex</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Late apex (Appropriate)</label>
+      <label><input type="checkbox" name="brakeTurnApex" onchange="handleBrakeTurnApexSelection(this)"> Late and deep (Appropriate)</label>
     </div>
 
     <div class="aa-subheading">Cones Hit</div>
@@ -268,25 +286,25 @@
       <div>Location</div>
       <div class="center">Inside</div>
       <div class="center">Outside</div>
-      <div class="center">#</div>
+      <div class="center"># Cones</div>
     </div>
 
-    <div class="brake-turn-cone-row">
-      <div>Apex</div>
-      <input type="checkbox" class="brake-turn-cone-checkbox">
-      <input type="checkbox" class="brake-turn-cone-checkbox">
-      <input type="text" class="brake-turn-cone-count" inputmode="numeric">
-    </div>
-
-    <div class="brake-turn-cone-row">
-      <div>Exit</div>
-      <input type="checkbox" class="brake-turn-cone-checkbox">
-      <input type="checkbox" class="brake-turn-cone-checkbox">
-      <input type="text" class="brake-turn-cone-count" inputmode="numeric">
-    </div>
-
-    <div class="brake-turn-off-course">
-      <label><input type="checkbox" id="brakeTurnOffCourse"> Off Course</label>
+    <div id="brakeTurnConesContainer">
+      <div class="brake-turn-cone-row">
+        <div>North Straight</div>
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="North Straight" data-side="inside">
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="North Straight" data-side="outside">
+        <input type="text" class="brake-turn-cone-count" data-location="North Straight" inputmode="numeric">
+      </div>
+      <div class="brake-turn-cone-row">
+        <div>Turn</div>
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="Turn" data-side="inside">
+        <input type="checkbox" class="brake-turn-cone-checkbox" data-location="Turn" data-side="outside">
+        <input type="text" class="brake-turn-cone-count" data-location="Turn" inputmode="numeric">
+      </div>
+      <div class="brake-turn-off-course">
+        <label><input type="checkbox" id="brakeTurnOffCourse"> Off Course</label>
+      </div>
     </div>
 
     <div class="aa-subheading">Results</div>
@@ -302,6 +320,22 @@
     <div class="footer">
       <div class="sync-status" id="brakeTurnSyncStatus">All runs synced</div>
       <button class="submit-btn" onclick="submitBrakeTurnRun()">Submit</button>
+    </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs at 50 MPH.</p>
+      <p>Students will enter turn at minimum speed of 50 MPH.</p>
+      <p>Students will align vehicle in proper lane alignment and brake prior to entering turn for no more than one (1) second.</p>
+      <p>Student will use proper “LATE APEX” to complete turn without leaving the course or hitting any cones.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Identify the decisional process and how it relates to space and judgement.</li>
+        <li>Identify how to analyze choices and execute maneuvers all at a required speed.</li>
+        <li>Understand that driving is a far more mental process than physical.</li>
+        <li>Understand the importance of vehicle placement and stopping distances.</li>
+      </ul>
     </div>
   </div>
 
@@ -337,20 +371,21 @@
     <div class="aa-subheading">Cones Hit</div>
     <div class="lollipop-cones-grid">
       <label><input type="checkbox" class="lollipop-cone-checkbox" data-location="Circle"> Circle</label>
-      <input type="text" id="lollipopCircleCount" inputmode="numeric">
-
+      <input type="text" id="lollipopCircleCount" inputmode="numeric" placeholder="#">
       <label><input type="checkbox" class="lollipop-cone-checkbox" data-location="Slalom"> Slalom</label>
-      <input type="text" id="lollipopSlalomCount" inputmode="numeric">
+      <input type="text" id="lollipopSlalomCount" inputmode="numeric" placeholder="#">
     </div>
 
     <div class="aa-subheading">Instructor Observations</div>
     <div class="results-block">
-      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Hit curb"> Hit curb</label>
-      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Poor lane discipline"> Poor lane discipline</label>
-      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Improper steering"> Improper steering</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Did not shuffle steer"> Did not shuffle steer</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Did not hit appropriate apex"> Did not hit appropriate apex</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Overall too slow"> Overall too slow</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Applied brakes"> Applied brakes</label>
+      <label><input type="checkbox" class="lollipop-observation-checkbox" value="Entry speed too fast"> Entry speed too fast</label>
     </div>
 
-    <div class="aa-subheading">Results</div>
+    <div class="aa-subheading">Result</div>
     <div class="results-block">
       <label><input type="checkbox" name="lollipopResult" onchange="handleLollipopResultSelection(this)"> Qualifying</label>
       <label><input type="checkbox" name="lollipopResult" onchange="handleLollipopResultSelection(this)"> Non-Qualifying</label>
@@ -360,6 +395,21 @@
     <div class="footer">
       <div class="sync-status" id="lollipopSyncStatus">All runs synced</div>
       <button class="submit-btn" onclick="submitLollipopRun()">Submit</button>
+    </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs at 21 seconds or less.</p>
+      <p>Student will drive in the direction given by the instructor with hitting any cones.</p>
+      <p>Use of brakes on any portion of this skills course is disqualifying.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Learn the decisional process and hot it relates to space and time management.</li>
+        <li>Understand the relationship of vehicle placement to corner entry.</li>
+        <li>Understand the importance of proper seating and how it contributes to overall driver control.</li>
+        <li>Understand steering inputs and time when going around obstacles.</li>
+      </ul>
     </div>
   </div>
 
@@ -373,6 +423,7 @@
       </div>
     </div>
 
+    <div class="aa-subheading">Speed</div>
     <div class="aa-grid two-field-grid">
       <div class="aa-field">
         <label for="slalomSpeedIn">Speed In</label>
@@ -387,20 +438,20 @@
 
     <div class="aa-subheading">Instructor Observations</div>
     <div class="results-block">
-      <label><input type="checkbox" class="slalom-observation-checkbox" value="Entry speed too slow"> Entry speed too slow</label>
-      <label><input type="checkbox" class="slalom-observation-checkbox" value="Did not maintain speed throughout course"> Did not maintain speed throughout course</label>
-      <label><input type="checkbox" class="slalom-observation-checkbox" value="Exit speed too slow"> Exit speed too slow</label>
-      <label><input type="checkbox" class="slalom-observation-checkbox" value="Applied brakes"> Applied brakes</label>
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Utilized brakes in the middle of course"> Utilized brakes in the middle of course</label>
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Did not modulate speed throughout course"> Did not modulate speed throughout course</label>
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Did not shuffle steer"> Did not shuffle steer</label>
+      <label><input type="checkbox" class="slalom-observation-checkbox" value="Improper apexing"> Improper apexing</label>
     </div>
 
+    <div class="aa-subheading">Total Cones Hit</div>
     <div class="aa-grid single-field-grid">
       <div class="aa-field">
-        <label for="slalomTotalConesHit">Total Cones Hit</label>
-        <input type="text" id="slalomTotalConesHit" inputmode="numeric">
+        <input type="text" id="slalomTotalConesHit" inputmode="numeric" placeholder="Total cones hit">
       </div>
     </div>
 
-    <div class="aa-subheading">Results</div>
+    <div class="aa-subheading">Result</div>
     <div class="results-block">
       <label><input type="checkbox" name="slalomResult" onchange="handleSlalomResultSelection(this)"> Qualifying</label>
       <label><input type="checkbox" name="slalomResult" onchange="handleSlalomResultSelection(this)"> Non-Qualifying</label>
@@ -411,9 +462,26 @@
       <div class="sync-status" id="slalomSyncStatus">All runs synced</div>
       <button class="submit-btn" onclick="submitSlalomRun()">Submit</button>
     </div>
+
+    <div class="aa-info">
+      <h3>Qualifying Run Defined</h3>
+      <p>Students must make three (3) satisfactory runs at an average speed of 28 MPH.</p>
+      <p>Student will maintain the 28 MPH speed throughout the exercise without hitting cones.</p>
+
+      <h3>Course Objectives</h3>
+      <ul>
+        <li>Utilize proper seating and hand position while driving.</li>
+        <li>Utilize proper timing of steering inputs, or how to time your steering when driving around obstacles.</li>
+        <li>Develop hand and eye coordination.</li>
+        <li>Understand the relationship of feet per second and how it relates to timing of steering around obstacles.</li>
+        <li>Understand weight transfer and how a little change in speed can make a large change in how the vehicle reacts.</li>
+        <li>Learn proper steering skills (shuffle steering) that will be needed for more complicated maneuvers.</li>
+      </ul>
+    </div>
   </div>
 
 </div>
+
 </div>
 
 <script src="app.js"></script>
